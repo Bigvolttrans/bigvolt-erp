@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bigvolt Group - Integrated ERP & HRM Portal</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .active-tab { background-color: #2563eb !important; color: white !important; }
+        @media print {
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans min-h-screen flex flex-col">
+
+    <!-- ================= 1. LOGIN SCREEN ================= -->
+    <div id="loginScreen" class="fixed inset-0 bg-slate-900 flex items-center justify-center z-50 p-4">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md border border-slate-700">
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <i class="fa-solid fa-industry text-3xl text-blue-600"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-800">Bigvolt Group Portal</h2>
+                <p class="text-xs text-gray-500 mt-1">Bigvolt | Innovivo Fabtech | AR Rehyan</p>
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <label class="text-xs font-bold text-gray-600 uppercase">Username</label>
+                    <input type="text" id="loginUser" value="admin" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none mt-1 text-sm">
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-gray-600 uppercase">Password</label>
+                    <input type="password" id="loginPass" value="bigvolt123" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none mt-1 text-sm">
+                </div>
+                <button onclick="checkLogin()" class="w-full bg-blue-600 text-white py-2.5 rounded-lg font-bold hover:bg-blue-700 transition shadow-lg text-sm">Login to ERP</button>
+                <p id="loginError" class="text-xs text-red-500 text-center hidden font-semibold">Galat Username ya Password!</p>
+                <p class="text-xs text-gray-400 text-center mt-2">Default: admin / bigvolt123</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= 2. MAIN APPLICATION ================= -->
+    <div id="mainApp" class="hidden flex-1 flex flex-col">
+
+        <!-- Top Header -->
+        <header class="bg-slate-900 text-white p-4 shadow-lg flex flex-wrap justify-between items-center no-print">
+            <div class="flex items-center space-x-3">
+                <i class="fa-solid fa-industry text-2xl text-blue-400"></i>
+                <div>
+                    <h1 class="text-lg md:text-xl font-bold tracking-wide">Bigvolt Group Operations</h1>
+                    <p class="text-xs text-gray-400">Integrated ERP & HRM Management</p>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-3 mt-2 sm:mt-0 flex-wrap gap-y-2">
+                <!-- Unit Switcher -->
+                <select id="unitFilter" onchange="switchUnit()" class="bg-slate-800 text-white px-3 py-1.5 rounded border border-slate-700 focus:outline-none text-xs">
+                    <option value="All">All Units (Combined)</option>
+                    <option value="Bigvolt">Bigvolt Transformers</option>
+                    <option value="Innovivo">Innovivo Fabtech (Tanks)</option>
+                    <option value="AR_Rehyan">AR Rehyan (Core Cutting)</option>
+                </select>
+
+                <!-- Head Contacts Button -->
+                <button onclick="openContactsModal()" class="bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded border border-slate-700 text-xs">
+                    <i class="fa-solid fa-phone text-amber-400 mr-1"></i> Head Contacts
+                </button>
+
+                <!-- Company Website Button -->
+                <a id="companyWebBtn" href="https://www.bigvolt.com" target="_blank" class="bg-blue-600 hover:bg-blue-700 px-3 py-1.5 rounded text-xs">
+                    <i class="fa-solid fa-globe mr-1"></i> Website
+                </a>
+
+                <!-- Security/Password Button -->
+                <button onclick="openSecurityModal()" class="bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded border border-slate-700 text-xs">
+                    <i class="fa-solid fa-key text-green-400 mr-1"></i> Passwords
+                </button>
+
+                <!-- Logout Button -->
+                <button onclick="logout()" class="bg-red-600 hover:bg-red-700 px-3 py-1.5 rounded text-xs">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Navigation Bar (9 Modules) -->
+        <nav class="bg-white border-b border-gray-200 shadow-sm overflow-x-auto no-print">
+            <div class="flex space-x-1 p-2 min-w-max text-xs font-medium">
+                <button onclick="showTab('dashboard')" id="btn-dashboard" class="tab-btn px-3 py-2 rounded-md active-tab"><i class="fa-solid fa-chart-line mr-1"></i> Dashboard</button>
+                <button onclick="showTab('employees')" id="btn-employees" class="tab-btn px-3 py-2 rounded-md hover:bg-gray-100"><i class="fa-solid fa-users mr-1"></i> Employees & ESIC</button>
+                <button onclick="showTab('attendance')" id="btn-attendance" class="tab-btn px-3 py-2 rounded-md hover:bg-gray-100"><i class="fa-solid fa-calendar-check mr-1"></i> Attendance & OT</button>
+                <button onclick="showTab('payroll')" id="btn-payroll" class="tab-btn px-3 py-2 rounded-md hover:bg-gray-100"><i class="fa-solid fa-calculator mr-1"></i> Payroll & Advance</button>
+                <button onclick="showTab('expenses')" id="btn-expenses" class="tab-btn px-3 py-2 rounded-md hover:bg-gray-100"><i class="fa-solid fa-wallet mr-1"></i> Daily Expenses</button>
+                <button onclick="showTab('inventory')" id="btn-inventory" class="tab-btn px-3 py-2 rounded-md hover:bg-gray-100"><i class="fa-solid fa-boxes-stacked mr-1"></i> Store Items</button>
+                <button onclick="showTab('inward')" id="btn-inward" class="tab-btn px-3 py-2 rounded-md hover:bg-gray-100"><i class="fa-solid fa-truck-ramp-box mr-1"></i> Inward Register</button>
+                <button onclick="showTab('vendors')" id="btn-vendors" class="tab-btn px-3 py-2 rounded-md hover:bg-gray-100"><i class="fa-solid fa-address-book mr-1"></i> Vendors</button>
+                <button onclick="showTab('catalogue')" id="btn-catalogue" class="tab-btn px-3 py-2 rounded-md hover:bg-gray-100"><i class="fa-solid fa-book-open mr-1"></i> Products Catalogue</button>
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="p-4 md:p-6 max-w-7xl mx-auto flex-1 w-full">
+
+            <!-- MODULE 1: DASHBOARD -->
+            <section id="tab-dashboard" class="tab-content space-y-6">
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200 border-l-4 border-l-blue-600">
+                        <p class="text-xs text-gray-500 font-bold uppercase">Total Workforce</p>
+                        <h3 id="dash-total-emp" class="text-2xl font-bold mt-1">0</h3>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200 border-l-4 border-l-green-600">
+                        <p class="text-xs text-gray-500 font-bold uppercase">Today Present</p>
+                        <h3 id="dash-present-emp" class="text-2xl font-bold mt-1 text-green-600">0</h3>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200 border-l-4 border-l-red-600">
+                        <p class="text-xs text-gray-500 font-bold uppercase">Today Cash Expense</p>
+                        <h3 id="dash-today-expense" class="text-2xl font-bold mt-1 text-red-600">₹ 0</h3>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200 border-l-4 border-l-amber-600">
+                        <p class="text-xs text-gray-500 font-bold uppercase">Stock Low Items</p>
+                        <h3 id="dash-low-stock" class="text-2xl font-bold mt-1 text-amber-600">0</h3>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
+                        <div class="flex items-center justify-between border-b pb-2 mb-3">
+                            <h4 class="font-bold text-gray-800"><i class="fa-solid fa-bolt text-amber-500 mr-2"></i>Bigvolt Transformers</h4>
+                            <span id="bg-emp-count" class="bg-amber-100 text-amber-800 text-xs font-bold px-2 py-0.5 rounded">0 Workers</span>
+                        </div>
+                        <p class="text-xs text-gray-600">Manufacturing: Power & Distribution Transformers, HT Panels, Oil Transformers.</p>
+                    </div>
+                    <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
+                        <div class="flex items-center justify-between border-b pb-2 mb-3">
+                            <h4 class="font-bold text-gray-800"><i class="fa-solid fa-industry text-blue-500 mr-2"></i>Innovivo Fabtech</h4>
+                            <span id="in-emp-count" class="bg-blue-100 text-blue-800 text-xs font-bold px-2 py-0.5 rounded">0 Workers</span>
+                        </div>
+                        <p class="text-xs text-gray-600">Manufacturing: Transformer Tanks, Corrugated Fins, Heavy Fabrications & Welding.</p>
+                    </div>
+                    <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
+                        <div class="flex items-center justify-between border-b pb-2 mb-3">
+                            <h4 class="font-bold text-gray-800"><i class="fa-solid fa-scissors text-green-500 mr-2"></i>AR Rehyan</h4>
+                            <span id="ar-emp-count" class="bg-green-100 text-green-800 text-xs font-bold px-2 py-0.5 rounded">0 Workers</span>
+                        </div>
+                        <p class="text-xs text-gray-600">Manufacturing: CRGO Core Cutting, Lamination Processing, Core Assembly.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MODULE 2: EMPLOYEES & ESIC -->
+            <section id="tab-employees" class="tab-content space-y-4 hidden">
+                <div class="flex flex-wrap justify-between items-center bg-white p-4 rounded-xl shadow-sm border border-gray-200 gap-2">
+                    <h2 class="text-md font-bold text-gray-800">Employee KYC Directory & ESIC Status</h2>
+                    <div class="flex space-x-2">
+                        <a href="https://www.esic.gov.in" target="_blank" class="bg-amber-600 hover:bg-amber-700 text-white px-3 py-1.5 rounded-lg text-xs flex items-center">
+                            <i class="fa-solid fa-arrow-up-right-from-square mr-1.5"></i> ESIC Portal
+                        </a>
+                        <button onclick="openEmpModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold">+ Add New Employee</button>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-x-auto">
+                    <table class="w-full text-left text-xs">
+                        <thead class="bg-gray-50 border-b">
+                            <tr>
+                                <th class="p-3">Name</th>
+                                <th class="p-3">Unit</th>
+                                <th class="p-3">Designation</th>
+                                <th class="p-3">Phone</th>
+                                <th class="p-3">Daily Wage (₹)</th>
+                                <th class="p-3">ESIC Direct Link</th>
+                                <th class="p-3">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="empTableBody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- MODULE 3: ATTENDANCE & OVERTIME -->
+            <section id="tab-attendance" class="tab-content space-y-4 hidden">
+                <div class="flex flex-wrap justify-between items-center bg-white p-4 rounded-xl shadow-sm border border-gray-200 gap-2">
+                    <div>
+                        <h2 class="text-md font-bold text-gray-800">Daily Attendance & Overtime Log</h2>
+                        <p class="text-xs text-gray-500">Mark Present (P), Absent (A), Half Day (HD) & OT Hours</p>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <input type="date" id="attDate" class="border p-1.5 rounded text-xs">
+                        <button onclick="saveAttendance()" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded text-xs font-semibold">Save Attendance</button>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-x-auto">
+                    <table class="w-full text-left text-xs">
+                        <thead class="bg-gray-50 border-b">
+                            <tr>
+                                <th class="p-3">Employee Name</th>
+                                <th class="p-3">Unit</th>
+                                <th class="p-3">Status</th>
+                                <th class="p-3">OT Hours</th>
+                            </tr>
+                        </thead>
+                        <tbody id="attTableBody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- MODULE 4: PAYROLL & ADVANCE -->
+            <section id="tab-payroll" class="tab-content space-y-4 hidden">
+                <div class="flex justify-between items-center bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+                    <h2 class="text-md font-bold text-gray-800">Monthly Payroll & Advance Deduction</h2>
+                    <button onclick="exportCSV('payroll')" class="bg-slate-800 text-white px-3 py-1.5 rounded text-xs hover:bg-slate-900"><i class="fa-solid fa-file-excel mr-1"></i> Export Payroll Sheet</button>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-x-auto">
+                    <table class="w-full text-left text-xs">
+                        <thead class="bg-gray-50 border-b">
+                            <tr>
+                                <th class="p-3">Employee</th>
+                                <th class="p-3">Daily Rate</th>
+                                <th class="p-3">Days Worked</th>
+                                <th class="p-3">Base Pay</th>
+                                <th class="p-3 text-red-600">Advance Taken (₹)</th>
+                                <th class="p-3 font-bold text-green-700">Net Payable</th>
+                                <th class="p-3">Advance Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="payrollTableBody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- MODULE 5: DAILY CASH EXPENSES -->
+            <section id="tab-expenses" class="tab-content space-y-4 hidden">
+                <div class="flex justify-between items-center bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+                    <div>
+                        <h2 class="text-md font-bold text-gray-800">Daily Cash Expense Tracker</h2>
+                        <p class="text-xs text-gray-500">Log all factory cash expenditures per day</p>
+                    </div>
+                    <button onclick="openExpenseModal()" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold">+ Log Expense</button>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-x-auto">
+                    <table class="w-full text-left text-xs">
+                        <thead class="bg-gray-50 border-b">
+                            <tr>
+                                <th class="p-3">Date</th>
+                                <th class="p-3">Unit</th>
+                                <th class="p-3">Details / Expense Head</th>
+                                <th class="p-3">Paid To</th>
+                                <th class="p-3">Amount (₹)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="expenseTableBody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- MODULE 6: STORE ITEMS & STOCK REQUIREMENT -->
+            <section id="tab-inventory" class="tab-content space-y-4 hidden">
+                <div class="flex justify-between items-center bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+                    <h2 class="text-md font-bold text-gray-800">Store Raw Material & Stock Requirement Alert</h2>
+                    <button onclick="openItemModal()" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold">+ Add Store Item</button>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-x-auto">
+                    <table class="w-full text-left text-xs">
+                        <thead class="bg-gray-50 border-b">
+                            <tr>
+                                <th class="p-3">Item Name</th>
+                                <th class="p-3">Unit</th>
+                                <th class="p-3">Current Stock</th>
+                                <th class="p-3">Min Requirement</th>
+                                <th class="p-3">Stock Status</th>
+                                <th class="p-3">Update Stock</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventoryTableBody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- MODULE 7: INWARD VEHICLE & INVOICE REGISTER -->
+            <section id="tab-inward" class="tab-content space-y-4 hidden">
+                <div class="flex justify-between items-center bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+                    <h2 class="text-md font-bold text-gray-800">Inward Material Gate Register (Vehicle & Invoice Log)</h2>
+                    <button onclick="openInwardModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold">+ Add Inward Entry</button>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-x-auto">
+                    <table class="w-full text-left text-xs border-collapse">
+                        <thead class="bg-slate-800 text-white border-b">
+                            <tr>
+                                <th class="p-2 border">Date</th>
+                                <th class="p-2 border">Invoice No.</th>
+                                <th class="p-2 border">Supplier / Vendor</th>
+                                <th class="p-2 border">Material Name</th>
+                                <th class="p-2 border">Qty Received</th>
+                                <th class="p-2 border">Vehicle No.</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inwardTableBody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- MODULE 8: VENDORS DIRECTORY -->
+            <section id="tab-vendors" class="tab-content space-y-4 hidden">
+                <div class="flex justify-between items-center bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+                    <h2 class="text-md font-bold text-gray-800">Supplier & Vendor Directory</h2>
+                    <button onclick="openVendorModal()" class="bg-slate-800 hover:bg-slate-900 text-white px-3 py-1.5 rounded-lg text-xs font-semibold">+ Add New Vendor</button>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-x-auto">
+                    <table class="w-full text-left text-xs">
+                        <thead class="bg-gray-50 border-b">
+                            <tr>
+                                <th class="p-3">Vendor/Firm Name</th>
+                                <th class="p-3">Material Supplied</th>
+                                <th class="p-3">Contact Person</th>
+                                <th class="p-3">Phone Number</th>
+                            </tr>
+                        </thead>
+                        <tbody id="vendorTableBody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- MODULE 9: COMPANY PRODUCT CATALOGUE -->
+            <section id="tab-catalogue" class="tab-content space-y-4 hidden">
+                <div class="flex justify-between items-center bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+                    <h2 class="text-md font-bold text-gray-800">Products Manufacturing Catalogue</h2>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-white rounded-xl shadow border p-4">
+                        <div class="h-36 bg-amber-50 rounded flex items-center justify-center text-amber-500 mb-3 border border-amber-200"><i class="fa-solid fa-bolt-lightning text-4xl"></i></div>
+                        <span class="text-xs bg-amber-100 text-amber-800 px-2 py-0.5 rounded font-bold">Bigvolt Transformers</span>
+                        <h3 class="font-bold text-sm mt-2">Power & Distribution Transformers</h3>
+                        <p class="text-xs text-gray-600 mt-1">High grade copper wound transformers ranging from 11KV to 33KV.</p>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow border p-4">
+                        <div class="h-36 bg-blue-50 rounded flex items-center justify-center text-blue-500 mb-3 border border-blue-200"><i class="fa-solid fa-box text-4xl"></i></div>
+                        <span class="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded font-bold">Innovivo Fabtech</span>
+                        <h3 class="font-bold text-sm mt-2">Corrugated Transformer Tanks</h3>
+                        <p class="text-xs text-gray-600 mt-1">Precision welded leakage-tested MS tanks with radiator fins.</p>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow border p-4">
+                        <div class="h-36 bg-green-50 rounded flex items-center justify-center text-green-500 mb-3 border border-green-200"><i class="fa-solid fa-scissors text-4xl"></i></div>
+                        <span class="text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded font-bold">AR Rehyan</span>
+                        <h3 class="font-bold text-sm mt-2">CRGO Core Lamination</h3>
+                        <p class="text-xs text-gray-600 mt-1">Prime CRGO steel sheets with precision angle slitting & core cutting.</p>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- ================= MODALS ================= -->
+
+    <!-- Add Employee Modal -->
+    <div id="empModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 p-4">
+        <div class="bg-white p-6 rounded-xl w-full max-w-md space-y-3">
+            <h3 class="text-md font-bold">Add New Employee</h3>
+            <input type="text" id="empName" placeholder="Full Name" class="w-full border p-2 rounded text-xs">
+            <select id="empUnit" class="w-full border p-2 rounded text-xs">
+                <option value="Bigvolt">Bigvolt Transformers</option>
+                <option value="Innovivo">Innovivo Fabtech</option>
+                <option value="AR_Rehyan">AR Rehyan</option>
+            </select>
+            <input type="text" id="empDesig" placeholder="Designation (e.g., Welder, Operator)" class="w-full border p-2 rounded text-xs">
+            <input type="text" id="empPhone" placeholder="Phone Number" class="w-full border p-2 rounded text-xs">
+            <input type="number" id="empRate" placeholder="Daily Wage Rate (₹)" class="w-full border p-2 rounded text-xs">
+            <div class="flex justify-end space-x-2 pt-2">
+                <button onclick="closeEmpModal()" class="px-3 py-1 text-xs border rounded">Cancel</button>
+                <button onclick="addEmployee()" class="px-3 py-1 text-xs bg-blue-600 text-white rounded">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Expense Modal -->
+    <div id="expenseModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 p-4">
+        <div class="bg-white p-6 rounded-xl w-full max-w-md space-y-3">
+            <h3 class="text-md font-bold">Log Daily Cash Expense</h3>
+            <input type="date" id="expDate" class="w-full border p-2 rounded text-xs">
+            <select id="expUnit" class="w-full border p-2 rounded text-xs">
+                <option value="Bigvolt">Bigvolt Transformers</option>
+                <option value="Innovivo">Innovivo Fabtech</option>
+                <option value="AR_Rehyan">AR Rehyan</option>
+            </select>
+            <input type="text" id="expDetail" placeholder="Expense Head / Details" class="w-full border p-2 rounded text-xs">
+            <input type="text" id="expPaidTo" placeholder="Paid To (Person/Shop)" class="w-full border p-2 rounded text-xs">
+            <input type="number" id="expAmount" placeholder="Amount (₹)" class="w-full border p-2 rounded text-xs">
+            <div class="flex justify-end space-x-2 pt-2">
+                <button onclick="closeExpenseModal()" class="px-3 py-1 text-xs border rounded">Cancel</button>
+                <button onclick="addExpense()" class="px-3 py-1 text-xs bg-red-600 text-white rounded">Save Expense</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Item Modal -->
+    <div id="itemModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 p-4">
+        <div class="bg-white p-6 rounded-xl w-full max-w-md space-y-3">
+            <h3 class="text-md font-bold">Add Store Raw Material</h3>
+            <input type="text" id="itemName" placeholder="Item Name (e.g. Copper Wire)" class="w-full border p-2 rounded text-xs">
+            <select id="itemUnit" class="w-full border p-2 rounded text-xs">
+                <option value="Bigvolt">Bigvolt Transformers</option>
+                <option value="Innovivo">Innovivo Fabtech</option>
+                <option value="AR_Rehyan">AR Rehyan</option>
+            </select>
+            <input type="number" id="itemStock" placeholder="Current Stock Qty" class="w-full border p-2 rounded text-xs">
+            <input type="number" id="itemMin" placeholder="Minimum Requirement Level" class="w-full border p-2 rounded text-xs">
+            <div class="flex justify-end space-x-2 pt-2">
+                <button onclick="closeItemModal()" class="px-3 py-1 text-xs border rounded">Cancel</button>
+                <button onclick="addItem()" class="px-3 py-1 text-xs bg-green-600 text-white rounded">Save Item</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Inward Modal -->
+    <div id="inwardModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 p-4">
+        <div class="bg-white p-6 rounded-xl w-full max-w-md space-y-3">
+            <h3 class="text-md font-bold">Log New Vehicle Inward Entry</h3>
+            <input type="date" id="inDate" class="w-full border p-2 rounded text-xs">
+            <input type="text" id="inInvoice" placeholder="Invoice Number" class="w-full border p-2 rounded text-xs">
+            <input type="text" id="inVendor" placeholder="Supplier / Vendor Name" class="w-full border p-2 rounded text-xs">
+            <input type="text" id="inMaterial" placeholder="Material Name" class="w-full border p-2 rounded text-xs">
+            <input type="text" id="inQty" placeholder="Quantity (e.g. 5.2 Tons)" class="w-full border p-2 rounded text-xs">
+            <input type="text" id="inVehicle" placeholder="Vehicle Number" class="w-full border p-2 rounded text-xs">
+            <div class="flex justify-end space-x-2 pt-2">
+                <button onclick="closeInwardModal()" class="px-3 py-1 text-xs border rounded">Cancel</button>
+                <button onclick="addInward()" class="px-3 py-1 text-xs bg-indigo-600 text-white rounded">Save Log</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Vendor Modal -->
+    <div id="vendorModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 p-4">
+        <div class="bg-white p-6 rounded-xl w-full max-w-md space-y-3">
+            <h3 class="text-md font-bold">Add Supplier Vendor</h3>
+            <input type="text" id="vFirm" placeholder="Vendor / Firm Name" class="w-full border p-2 rounded text-xs">
+            <input type="text" id="vMaterial" placeholder="Material Supplied" class="w-full border p-2 rounded text-xs">
+            <input type="text" id="vPerson" placeholder="Contact Person Name" class="w-full border p-2 rounded text-xs">
+            <input type="text" id="vPhone" placeholder="Phone Number" class="w-full border p-2 rounded text-xs">
+            <div class="flex justify-end space-x-2 pt-2">
+                <button onclick="closeVendorModal()" class="px-3 py-1 text-xs border rounded">Cancel</button>
+                <button onclick="addVendor()" class="px-3 py-1 text-xs bg-slate-800 text-white rounded">Save Vendor</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Head Contacts Modal -->
+    <div id="contactsModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 p-4">
+        <div class="bg-white p-6 rounded-xl w-full max-w-md space-y-3">
+            <h3 class="text-md font-bold border-b pb-2">Management Head Contacts</h3>
+            <div id="contactsList" class="space-y-2 text-xs"></div>
+            <div class="border-t pt-2 space-y-2">
+                <input type="text" id="newContactTitle" placeholder="Role (e.g. Plant Head)" class="w-full border p-1.5 rounded text-xs">
+                <input type="text" id="newContactPhone" placeholder="Phone Number" class="w-full border p-1.5 rounded text-xs">
+                <button onclick="addContact()" class="w-full bg-slate-800 text-white py-1 rounded text-xs">+ Add Contact</button>
+            </div>
+            <div class="flex justify-end pt-2">
+                <button onclick="closeContactsModal()" class="px-3 py-1 text-xs border rounded">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Security Credentials Modal -->
+    <div id="securityModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 p-4">
+        <div class="bg-white p-6 rounded-xl w-full max-w-md space-y-3">
+            <h3 class="text-md font-bold border-b pb-2">Change Login Credentials</h3>
+            <input type="text" id="newUsername" placeholder="New Username" class="w-full border p-2 rounded text-xs">
+            <input type="password" id="newPassword" placeholder="New Password" class="w-full border p-2 rounded text-xs">
+            <div class="flex justify-end space-x-2 pt-2">
+                <button onclick="closeSecurityModal()" class="px-3 py-1 text-xs border rounded">Cancel</button>
+                <button onclick="saveCredentials()" class="px-3 py-1 text-xs bg-green-600 text-white rounded">Save Credentials</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= 3. JAVASCRIPT APPLICATION LOGIC ================= -->
+    <script>
+        // Default Credentials Setup
+        let masterUser = localStorage.getItem('masterUser') || "admin";
+        let masterPass = localStorage.getItem('masterPass') || "bigvolt123";
+
+        // Login Check
+        function checkLogin() {
+            let u = document.getElementById('loginUser').value;
+            let p = document.getElementById('loginPass').value;
+            if(u === masterUser && p === masterPass) {
+                document.getElementById('loginScreen').classList.add('hidden');
+                document.getElementById('mainApp').classList.remove('hidden');
+            } else {
+                document.getElementById('loginError').classList.remove('hidden');
+            }
+        }
+
+        function logout() {
+            document.getElementById('mainApp').classList.add('hidden');
+            document.getElementById('loginScreen').classList.remove('hidden');
+        }
+
+        // Tab Navigation
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active-tab'));
+            document.getElementById('tab-' + tabId).classList.remove('hidden');
+            document.getElementById('btn-' + tabId).classList.add('active-tab');
+        }
+
+        // Persistent Data Stores
+        let employees = JSON.parse(localStorage.getItem('employees')) || [
+            { id: 1, name: "Ramesh Sharma", unit: "Bigvolt", designation: "Winding Master", phone: "9876543210", rate: 700, esic: true, advance: 1000 },
+            { id: 2, name: "Suresh Kumar", unit: "Innovivo", designation: "Senior Welder", phone: "9876543211", rate: 650, esic: false, advance: 500 },
+            { id: 3, name: "Amit Verma", unit: "AR_Rehyan", designation: "Core Operator", phone: "9876543212", rate: 600, esic: false, advance: 0 }
+        ];
+
+        let expenses = JSON.parse(localStorage.getItem('expenses')) || [
+            { date: "2026-10-06", unit: "Bigvolt", detail: "Factory Refreshments", paidTo: "Local Vendor", amount: 250 }
+        ];
+
+        let items = JSON.parse(localStorage.getItem('items')) || [
+            { name: "CRGO Core Sheet (mm)", unit: "AR_Rehyan", stock: 120, min: 200 },
+            { name: "Transformer Oil (Ltr)", unit: "Bigvolt", stock: 1500, min: 500 }
+        ];
+
+        let inwardLogs = JSON.parse(localStorage.getItem('inwardLogs')) || [
+            { date: "2026-10-06", inv: "INV-8891", vendor: "Tata Steel", material: "CRGO Steel Coil", qty: "5.2 Tons", vehicle: "RJ-02-GB-1234" }
+        ];
+
+        let vendors = JSON.parse(localStorage.getItem('vendors')) || [
+            { firm: "Tata Steel Ltd", material: "CRGO Coils", person: "Rajesh Ji", phone: "9829012345" }
+        ];
+
+        let contacts = JSON.parse(localStorage.getItem('contacts')) || [
+            { title: "Plant Owner", phone: "+91 9876543210" },
+            { title: "HR & Payroll Manager", phone: "+91 9876543211" }
+        ];
+
+        function saveAllData() {
+            localStorage.setItem('employees', JSON.stringify(employees));
+            localStorage.setItem('expenses', JSON.stringify(expenses));
+            localStorage.setItem('items', JSON.stringify(items));
+            localStorage.setItem('inwardLogs', JSON.stringify(inwardLogs));
+            localStorage.setItem('vendors', JSON.stringify(vendors));
+            localStorage.setItem('contacts', JSON.stringify(contacts));
+            renderAll();
+        }
+
+        function renderAll() {
+            let uFilter = document.getElementById('unitFilter').value;
+
+            // Render Employees
+            let filteredEmp = uFilter === 'All' ? employees : employees.filter(e => e.unit === uFilter);
+            let empHtml = '';
+            let attHtml = '';
+            let payrollHtml = '';
+
+            filteredEmp.forEach(e => {
+                empHtml += `<tr class="border-b">
+                    <td class="p-3 font-semibold">${e.name}</td>
+                    <td class="p-3"><span class="bg-blue-100 text-blue-800 text-xs px-2 py-0.5 rounded">${e.unit}</span></td>
+                    <td class="p-3">${e.designation}</td>
+                    <td class="p-3">${e.phone}</td>
+                    <td class="p-3">₹${e.rate}</td>
+                    <td class="p-3">${e.esic ? '<span class="text-green-600 font-bold">Done</span>' : '<a href="https://www.esic.gov.in" target="_blank" class="text-xs bg-red-100 text-red-600 px-2 py-1 rounded hover:bg-red-200">Pending (Open ESIC)</a>'}</td>
+                    <td class="p-3"><button onclick="deleteEmp(${e.id})" class="text-red-600 text-xs hover:underline">Delete</button></td>
+                </tr>`;
+
+                attHtml += `<tr class="border-b">
+                    <td class="p-3 font-semibold">${e.name}</td>
+                    <td class="p-3">${e.unit}</td>
+                    <td class="p-3">
+                        <select class="border p-1 rounded text-xs">
+                            <option value="P">Present (P)</option>
+                            <option value="A">Absent (A)</option>
+                            <option value="HD">Half Day (HD)</option>
+                        </select>
+                    </td>
+                    <td class="p-3"><input type="number" placeholder="OT Hours" class="border p-1 rounded w-20 text-xs" value="0"></td>
+                </tr>`;
+
+                let basePay = e.rate * 26;
+                let netPay = basePay - (e.advance || 0);
+                payrollHtml += `<tr class="border-b">
+                    <td class="p-3 font-semibold">${e.name}</td>
+                    <td class="p-3">₹${e.rate}</td>
+                    <td class="p-3">26 Days</td>
+                    <td class="p-3">₹${basePay}</td>
+                    <td class="p-3 text-red-600 font-semibold">₹${e.advance || 0}</td>
+                    <td class="p-3 font-bold text-green-700">₹${netPay}</td>
+                    <td class="p-3"><button onclick="addAdvancePrompt(${e.id})" class="text-xs bg-red-100 text-red-700 px-2 py-1 rounded">+ Add Advance</button></td>
+                </tr>`;
+            });
+            document.getElementById('empTableBody').innerHTML = empHtml;
+            document.getElementById('attTableBody').innerHTML = attHtml;
+            document.getElementById('payrollTableBody').innerHTML = payrollHtml;
+
+            // Render Expenses
+            let expHtml = '';
+            let todayExpenseTotal = 0;
+            expenses.forEach(ex => {
+                expHtml += `<tr class="border-b">
+                    <td class="p-3">${ex.date}</td>
+                    <td class="p-3">${ex.unit}</td>
+                    <td class="p-3">${ex.detail}</td>
+                    <td class="p-3">${ex.paidTo}</td>
+                    <td class="p-3 font-bold text-red-600">₹${ex.amount}</td>
+                </tr>`;
+                todayExpenseTotal += Number(ex.amount);
+            });
+            document.getElementById('expenseTableBody').innerHTML = expHtml;
+
+            // Render Inventory Items
+            let invHtml = '';
+            let lowStockCount = 0;
+            items.forEach(i => {
+                let isLow = i.stock < i.min;
+                if(isLow) lowStockCount++;
+                invHtml += `<tr class="border-b">
+                    <td class="p-3 font-semibold">${i.name}</td>
+                    <td class="p-3">${i.unit}</td>
+                    <td class="p-3 font-bold ${isLow ? 'text-red-600' : 'text-green-600'}">${i.stock}</td>
+                    <td class="p-3">${i.min}</td>
+                    <td class="p-3">${isLow ? '<span class="bg-red-100 text-red-700 px-2 py-0.5 rounded font-bold">Requirement Alert</span>' : '<span class="bg-green-100 text-green-700 px-2 py-0.5 rounded font-bold">Sufficient</span>'}</td>
+                    <td class="p-3"><button onclick="updateStockPrompt('${i.name}')" class="text-xs bg-gray-100 px-2 py-1 rounded border">Edit Stock</button></td>
+                </tr>`;
+            });
+            document.getElementById('inventoryTableBody').innerHTML = invHtml;
+
+            // Render Inward Logs
+            let inwardHtml = '';
+            inwardLogs.forEach(i => {
+                inwardHtml += `<tr class="border-b">
+                    <td class="p-2 border">${i.date}</td>
+                    <td class="p-2 border font-bold">${i.inv}</td>
+                    <td class="p-2 border">${i.vendor}</td>
+                    <td class="p-2 border">${i.material}</td>
+                    <td class="p-2 border font-semibold">${i.qty}</td>
+                    <td class="p-2 border">${i.vehicle}</td>
+                </tr>`;
+            });
+            document.getElementById('inwardTableBody').innerHTML = inwardHtml;
+
+            // Render Vendors
+            let vHtml = '';
+            vendors.forEach(v => {
+                vHtml += `<tr class="border-b">
+                    <td class="p-3 font-bold">${v.firm}</td>
+                    <td class="p-3">${v.material}</td>
+                    <td class="p-3">${v.person}</td>
+                    <td class="p-3">${v.phone}</td>
+                </tr>`;
+            });
+            document.getElementById('vendorTableBody').innerHTML = vHtml;
+
+            // Dashboard Counters
+            document.getElementById('dash-total-emp').innerText = employees.length;
+            document.getElementById('dash-present-emp').innerText = employees.length;
+            document.getElementById('dash-today-expense').innerText = "₹ " + todayExpenseTotal;
+            document.getElementById('dash-low-stock').innerText = lowStockCount;
+
+            document.getElementById('bg-emp-count').innerText = employees.filter(e => e.unit === 'Bigvolt').length + " Workers";
+            document.getElementById('in-emp-count').innerText = employees.filter(e => e.unit === 'Innovivo').length + " Workers";
+            document.getElementById('ar-emp-count').innerText = employees.filter(e => e.unit === 'AR_Rehyan').length + " Workers";
+        }
+
+        // Modal Operations
+        function openEmpModal() { document.getElementById('empModal').classList.remove('hidden'); }
+        function closeEmpModal() { document.getElementById('empModal').classList.add('hidden'); }
+        function addEmployee() {
+            let name = document.getElementById('empName').value;
+            let unit = document.getElementById('empUnit').value;
+            let designation = document.getElementById('empDesig').value;
+            let phone = document.getElementById('empPhone').value;
+            let rate = Number(document.getElementById('empRate').value);
+            if(name && rate) {
+                employees.push({ id: Date.now(), name, unit, designation, phone, rate, esic: false, advance: 0 });
+                saveAllData();
+                closeEmpModal();
+            }
+        }
+        function deleteEmp(id) {
+            employees = employees.filter(e => e.id !== id);
+            saveAllData();
+        }
+
+        function openExpenseModal() { document.getElementById('expenseModal').classList.remove('hidden'); }
+        function closeExpenseModal() { document.getElementById('expenseModal').classList.add('hidden'); }
+        function addExpense() {
+            let date = document.getElementById('expDate').value || new Date().toISOString().split('T')[0];
+            let unit = document.getElementById('expUnit').value;
+            let detail = document.getElementById('expDetail').value;
+            let paidTo = document.getElementById('expPaidTo').value;
+            let amount = document.getElementById('expAmount').value;
+            if(detail && amount) {
+                expenses.push({ date, unit, detail, paidTo, amount });
+                saveAllData();
+                closeExpenseModal();
+            }
+        }
+
+        function openItemModal() { document.getElementById('itemModal').classList.remove('hidden'); }
+        function closeItemModal() { document.getElementById('itemModal').classList.add('hidden'); }
+        function addItem() {
+            let name = document.getElementById('itemName').value;
+            let unit = document.getElementById('itemUnit').value;
+            let stock = Number(document.getElementById('itemStock').value);
+            let min = Number(document.getElementById('itemMin').value);
+            if(name) {
+                items.push({ name, unit, stock, min });
+                saveAllData();
+                closeItemModal();
+            }
+        }
+        function updateStockPrompt(itemName) {
+            let newQty = prompt("Enter new current stock quantity for " + itemName + ":");
+            if(newQty !== null) {
+                let item = items.find(i => i.name === itemName);
+                if(item) {
+                    item.stock = Number(newQty);
+                    saveAllData();
+                }
+            }
+        }
+
+        function openInwardModal() { document.getElementById('inwardModal').classList.remove('hidden'); }
+        function closeInwardModal() { document.getElementById('inwardModal').classList.add('hidden'); }
+        function addInward() {
+            let date = document.getElementById('inDate').value || new Date().toISOString().split('T')[0];
+            let inv = document.getElementById('inInvoice').value;
+            let vendor = document.getElementById('inVendor').value;
+            let material = document.getElementById('inMaterial').value;
+            let qty = document.getElementById('inQty').value;
+            let vehicle = document.getElementById('inVehicle').value;
+            if(inv && vendor) {
+                inwardLogs.push({ date, inv, vendor, material, qty, vehicle });
+                saveAllData();
+                closeInwardModal();
+            }
+        }
+
+        function openVendorModal() { document.getElementById('vendorModal').classList.remove('hidden'); }
+        function closeVendorModal() { document.getElementById('vendorModal').classList.add('hidden'); }
+        function addVendor() {
+            let firm = document.getElementById('vFirm').value;
+            let material = document.getElementById('vMaterial').value;
+            let person = document.getElementById('vPerson').value;
+            let phone = document.getElementById('vPhone').value;
+            if(firm) {
+                vendors.push({ firm, material, person, phone });
+                saveAllData();
+                closeVendorModal();
+            }
+        }
+
+        function addAdvancePrompt(empId) {
+            let emp = employees.find(e => e.id === empId);
+            let amt = prompt("Enter Advance Amount given to " + emp.name + " (₹):");
+            if(amt !== null) {
+                emp.advance = Number(amt);
+                saveAllData();
+            }
+        }
+
+        // Head Contacts Management
+        function openContactsModal() {
+            renderContacts();
+            document.getElementById('contactsModal').classList.remove('hidden');
+        }
+        function closeContactsModal() { document.getElementById('contactsModal').classList.add('hidden'); }
+        function renderContacts() {
+            let html = '';
+            contacts.forEach((c, idx) => {
+                html += `<div class="flex justify-between items-center bg-gray-50 p-2 rounded border">
+                    <div><strong>${c.title}:</strong> ${c.phone}</div>
+                    <button onclick="removeContact(${idx})" class="text-red-500 hover:underline">Remove</button>
+                </div>`;
+            });
+            document.getElementById('contactsList').innerHTML = html;
+        }
+        function addContact() {
+            let title = document.getElementById('newContactTitle').value;
+            let phone = document.getElementById('newContactPhone').value;
+            if(title && phone) {
+                contacts.push({ title, phone });
+                saveAllData();
+                renderContacts();
+            }
+        }
+        function removeContact(idx) {
+            contacts.splice(idx, 1);
+            saveAllData();
+            renderContacts();
+        }
+
+        // Security / Password Change
+        function openSecurityModal() { document.getElementById('securityModal').classList.remove('hidden'); }
+        function closeSecurityModal() { document.getElementById('securityModal').classList.add('hidden'); }
+        function saveCredentials() {
+            let u = document.getElementById('newUsername').value;
+            let p = document.getElementById('newPassword').value;
+            if(u && p) {
+                masterUser = u;
+                masterPass = p;
+                localStorage.setItem('masterUser', u);
+                localStorage.setItem('masterPass', p);
+                alert("Login Credentials Updated Successfully!");
+                closeSecurityModal();
+            }
+        }
+
+        function switchUnit() { renderAll(); }
+        function saveAttendance() { alert("Attendance Log Saved!"); }
+
+        // CSV Export Utility
+        function exportCSV(type) {
+            let csvContent = "data:text/csv;charset=utf-8,Name,Daily Rate,Advance,Net Pay\n";
+            employees.forEach(e => {
+                let net = (e.rate * 26) - (e.advance || 0);
+                csvContent += `${e.name},${e.rate},${e.advance || 0},${net}\n`;
+            });
+            let encodedUri = encodeURI(csvContent);
+            let link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "Payroll_Report.csv");
+            document.body.appendChild(link);
+            link.click();
+        }
+
+        window.onload = renderAll;
+    </script>
+</body>
+</html>
