@@ -872,7 +872,7 @@
                         <td class="p-3 text-amber-400">₹ ${emp.advance}</td>
                         <td class="p-3 font-bold text-emerald-400">₹ ${net}</td>
                         <td class="p-3 text-center">
-                            <button onclick="generateSalarySlip('${emp.name}', ${emp.baseSalary},${otPay}, ${gross},${net})" class="px-2 py-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded text-[11px] font-semibold">
+                            <button onclick="generateSalarySlip('${emp.name}', ${emp.baseSalary}, ${otPay}, ${gross}, ${net})" class="px-2 py-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded text-[11px] font-semibold">
                                 Generate Slip
                             </button>
                         </td>
@@ -890,4 +890,243 @@
                     <tr>
                         <td class="p-3">${exp.date}</td>
                         <td class="p-3 font-bold text-white">${exp.category}</td>
-                        <td class="p-3">${exp.desc}
+                        <td class="p-3">${exp.desc}</td>
+                        <td class="p-3 font-bold text-emerald-400">₹ ${exp.amount}</td>
+                        <td class="p-3">${exp.approvedBy}</td>
+                        <td class="p-3 text-center"><button class="text-slate-500 hover:text-slate-300"><i data-lucide="edit-3" class="w-4 h-4"></i></button></td>
+                    </tr>
+                `;
+            });
+            lucide.createIcons();
+        }
+
+        // 5. Render Invoices
+        function renderInvoiceTable() {
+            const tbody = document.getElementById('invoiceTableBody');
+            tbody.innerHTML = '';
+            invoices.forEach(inv => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="p-3"><span class="px-2 py-0.5 bg-indigo-500/20 text-indigo-400 rounded text-[10px] font-bold">${inv.type}</span></td>
+                        <td class="p-3 font-bold text-white">${inv.no}</td>
+                        <td class="p-3">${inv.date}</td>
+                        <td class="p-3 font-semibold">${inv.party}</td>
+                        <td class="p-3">₹ ${inv.tax}</td>
+                        <td class="p-3 font-bold text-emerald-400">₹ ${inv.total}</td>
+                        <td class="p-3 text-slate-400">${inv.eway}</td>
+                        <td class="p-3"><span class="px-2 py-0.5 bg-amber-500/20 text-amber-400 rounded text-[10px] font-bold">${inv.status}</span></td>
+                    </tr>
+                `;
+            });
+        }
+
+        // 6. Render Store Register
+        function renderStoreTable() {
+            const tbody = document.getElementById('storeTableBody');
+            tbody.innerHTML = '';
+            storeEntries.forEach(st => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="p-3"><span class="px-2 py-0.5 ${st.type === 'Inward' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'} rounded text-[10px] font-bold">${st.type}</span></td>
+                        <td class="p-3">${st.datetime}</td>
+                        <td class="p-3 font-bold text-white">${st.docNo}</td>
+                        <td class="p-3">${st.party}</td>
+                        <td class="p-3 font-semibold">${st.item}</td>
+                        <td class="p-3 text-amber-400 font-bold">${st.qty}</td>
+                        <td class="p-3">${st.vehicle}</td>
+                        <td class="p-3">${st.person}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        // 7. Render Production Cards
+        function renderProductionCards() {
+            const container = document.getElementById('productionCardsContainer');
+            container.innerHTML = '';
+            productionRuns.forEach(run => {
+                container.innerHTML += `
+                    <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 space-y-3">
+                        <div class="flex justify-between items-start">
+                            <h4 class="font-bold text-white text-base">${run.name}</h4>
+                            <span class="px-2 py-0.5 bg-indigo-500/20 text-indigo-400 rounded text-[10px] font-bold">${run.status}</span>
+                        </div>
+                        <p class="text-xs text-slate-400">Target Units: <strong class="text-white">${run.target} Transformers</strong></p>
+                        <p class="text-xs text-slate-400">Production In-Charge: <strong class="text-slate-200">${run.incharge}</strong></p>
+                    </div>
+                `;
+            });
+        }
+
+        // 8. Render Vendors Directory
+        function renderVendorTable() {
+            const tbody = document.getElementById('vendorTableBody');
+            tbody.innerHTML = '';
+            vendors.forEach((v, idx) => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="p-3">${idx + 1}</td>
+                        <td class="p-3 font-bold text-white">${v.name}</td>
+                        <td class="p-3 text-indigo-400 font-semibold">${v.items}</td>
+                        <td class="p-3">${v.contact}</td>
+                        <td class="p-3">${v.location}</td>
+                        <td class="p-3 text-slate-400">${v.desc}</td>
+                        <td class="p-3 text-center"><button class="text-slate-500 hover:text-slate-300"><i data-lucide="edit-3" class="w-4 h-4"></i></button></td>
+                    </tr>
+                `;
+            });
+            lucide.createIcons();
+        }
+
+        // Interactive Modals & Functions
+        function addEmployeePrompt() {
+            const name = prompt("Enter New Employee Name:");
+            if(name) {
+                employees.push({
+                    id: employees.length + 1,
+                    name: name,
+                    father: 'Father Name',
+                    joining: '2026-10-01',
+                    baseSalary: 18000,
+                    inTime: '09:00',
+                    outTime: '18:00',
+                    otHours: 0,
+                    esic: 'Pending',
+                    esicAmount: 200,
+                    advance: 0,
+                    bankName: 'SBI',
+                    accNo: '000000',
+                    ifsc: 'SBIN0001234'
+                });
+                renderAll();
+            }
+        }
+
+        function addExpensePrompt() {
+            const desc = prompt("Enter Expense Particulars / Description:");
+            const amt = prompt("Enter Amount (₹):");
+            if(desc && amt) {
+                expenses.push({
+                    date: '2026-10-07',
+                    category: 'Daily Cash Expense',
+                    desc: desc,
+                    amount: parseFloat(amt),
+                    approvedBy: 'Admin'
+                });
+                renderExpenseTable();
+            }
+        }
+
+        function addInvoicePrompt() {
+            const party = prompt("Enter Party Name:");
+            const total = prompt("Enter Total Invoice Amount:");
+            if(party && total) {
+                invoices.push({
+                    type: 'Purchase',
+                    no: `INV-${Math.floor(1000 + Math.random() * 9000)}`,
+                    date: '2026-10-07',
+                    party: party,
+                    tax: total * 0.82,
+                    total: total,
+                    eway: 'EWAY-90182390',
+                    status: 'Payment Pending'
+                });
+                renderInvoiceTable();
+            }
+        }
+
+        function addStoreEntryPrompt() {
+            const item = prompt("Enter Item Description:");
+            const qty = prompt("Enter Quantity:");
+            if(item && qty) {
+                storeEntries.push({
+                    type: 'Inward',
+                    datetime: '2026-10-07 11:00',
+                    docNo: 'GP-2001',
+                    party: 'Supplier Party',
+                    item: item,
+                    qty: qty,
+                    vehicle: 'RJ02 XX 0000',
+                    person: 'Gate Operator'
+                });
+                renderStoreTable();
+            }
+        }
+
+        function addProductionBatchPrompt() {
+            const name = prompt("Enter New Work Order / Batch Name:");
+            if(name) {
+                productionRuns.push({
+                    name: name,
+                    target: 50,
+                    status: 'Running',
+                    incharge: 'Apoorv Upadhyay'
+                });
+                renderProductionCards();
+            }
+        }
+
+        function addVendorPrompt() {
+            const name = prompt("Enter Vendor / Supplier Name:");
+            if(name) {
+                vendors.push({
+                    name: name,
+                    items: 'Raw Materials',
+                    contact: '9876543210',
+                    location: 'Khushkhera',
+                    desc: 'Primary Supplier'
+                });
+                renderVendorTable();
+            }
+        }
+
+        // Render Contractor Voucher Slip
+        function renderContractorVoucher() {
+            const name = document.getElementById('cName').value;
+            const job = document.getElementById('cJob').value;
+            const rate = parseFloat(document.getElementById('cRate').value) || 0;
+            const qty = parseFloat(document.getElementById('cQty').value) || 0;
+            const adv = parseFloat(document.getElementById('cAdv').value) || 0;
+            const food = parseFloat(document.getElementById('cFood').value) || 0;
+
+            const gross = rate * qty;
+            const deduct = adv + food;
+            const tds = gross * 0.01;
+            const net = gross - deduct - tds;
+
+            document.getElementById('vName').innerText = name;
+            document.getElementById('vJob').innerText = job;
+            document.getElementById('vRate').innerText = `₹ ${rate}`;
+            document.getElementById('vQty').innerText = qty;
+            document.getElementById('vGross').innerText = `₹ ${gross}`;
+            document.getElementById('vDeduct').innerText = `₹ ${deduct}`;
+            document.getElementById('vTds').innerText = `₹ ${tds}`;
+            document.getElementById('vNet').innerText = `₹ ${net}`;
+        }
+
+        // Generate Printable Salary Slip
+        function generateSalarySlip(name, base, ot, gross, net) {
+            alert(`Generating Pay Slip for ${name}\nGross Salary: ₹${gross}\nNet Payable: ₹${net}`);
+            window.print();
+        }
+
+        // Bank Modal Logic
+        let activeBankEmpId = null;
+        function openBankModal(empId) {
+            activeBankEmpId = empId;
+            document.getElementById('bankModal').classList.remove('hidden');
+        }
+        function closeBankModal() {
+            document.getElementById('bankModal').classList.add('hidden');
+        }
+        function saveBankDetails() {
+            alert("Bank account details saved successfully!");
+            closeBankModal();
+        }
+
+        function logout() {
+            alert("Logging out of Enterprise ERP System.");
+        }
+    </script>
+</body>
+</html>
