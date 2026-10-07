@@ -3,521 +3,328 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bigvolt Group - Integrated ERP & HRM Portal</title>
+    <title>Bigvolt Group - Multi-Company ERP Portal</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         .active-tab { background-color: #2563eb !important; color: white !important; }
         .active-subtab { background-color: #1e293b !important; color: white !important; }
         @media print {
             .no-print { display: none !important; }
             .print-only { display: block !important; }
+            body { background: white !important; color: black !important; }
         }
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800 font-sans min-h-screen flex flex-col">
 
-    <!-- ================= 1. LOGIN SCREEN ================= -->
-    <div id="loginScreen" class="fixed inset-0 bg-slate-900 flex items-center justify-center z-50 p-4">
-        <div class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md border border-slate-700">
-            <div class="text-center mb-6">
-                <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <i class="fa-solid fa-industry text-3xl text-blue-600"></i>
-                </div>
-                <h2 class="text-2xl font-bold text-gray-800">Bigvolt Group Portal</h2>
-                <p class="text-xs text-gray-500 mt-1">Bigvolt | Innovivo Fabtech | AR Rehyan</p>
+    <!-- TOP HEADER -->
+    <header class="bg-slate-900 text-white p-4 shadow-md flex justify-between items-center no-print">
+        <div class="flex items-center space-x-3">
+            <i class="fa-solid fa-building-user text-2xl text-blue-400"></i>
+            <div>
+                <h1 class="text-xl font-bold tracking-wide" id="currentCompanyHeader">Bigvolt Group Operations</h1>
+                <p class="text-xs text-gray-400" id="currentCompanySubHeader">Select a company to start</p>
             </div>
-            <div class="space-y-4">
+        </div>
+        <div class="flex items-center space-x-3">
+            <button onclick="switchCompanyScreen()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded text-sm font-semibold flex items-center gap-2">
+                <i class="fa-solid fa-[#fa-arrows-rotate] fa-arrows-rotate"></i> Switch Company
+            </button>
+        </div>
+    </header>
+
+    <!-- 1. COMPANY SELECTION SCREEN -->
+    <div id="companySelectScreen" class="flex-1 flex flex-col justify-center items-center p-6 bg-slate-800">
+        <div class="text-center mb-8">
+            <h2 class="text-3xl font-extrabold text-white">Select Working Company</h2>
+            <p class="text-gray-400 mt-2">Choose a company to access its dashboard, employees, and invoices</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl w-full">
+            <!-- Company 1 -->
+            <div onclick="selectCompany('c1')" class="bg-white rounded-xl p-6 shadow-xl hover:shadow-2xl transition cursor-pointer border-t-4 border-blue-600 flex flex-col justify-between">
                 <div>
-                    <label class="text-xs font-bold text-gray-600 uppercase">Username</label>
-                    <input type="text" id="loginUser" value="admin" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none mt-1 text-sm">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="bg-blue-100 text-blue-800 text-xs font-bold px-2.5 py-1 rounded">Private Limited</span>
+                        <i class="fa-solid fa-[#fa-bolt] fa-bolt text-2xl text-blue-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900">Bigvolt Transformers and Switchgear Pvt Ltd</h3>
+                    <p class="text-xs text-gray-500 mt-2"><i class="fa-solid fa-[#fa-location-dot] fa-location-dot"></i> H1 - 702 RIICO Industrial area, Khushkhera, Alwar, Rajasthan, 301707</p>
+                    <p class="text-xs text-gray-600 mt-1"><strong>GST:</strong> 08AAKCB0266E1ZV</p>
+                    <p class="text-xs text-gray-600"><strong>Contact:</strong> 7988340039, 7607070994</p>
+                    <p class="text-xs text-gray-600"><strong>Email:</strong> infobvts@gmail.com</p>
                 </div>
+                <button class="mt-6 w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700">Open Dashboard &rarr;</button>
+            </div>
+
+            <!-- Company 2 -->
+            <div onclick="selectCompany('c2')" class="bg-white rounded-xl p-6 shadow-xl hover:shadow-2xl transition cursor-pointer border-t-4 border-emerald-600 flex flex-col justify-between">
                 <div>
-                    <label class="text-xs font-bold text-gray-600 uppercase">Password</label>
-                    <input type="password" id="loginPass" value="bigvolt123" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none mt-1 text-sm">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-2.5 py-1 rounded">Private Limited</span>
+                        <i class="fa-solid fa-[#fa-industry] fa-industry text-2xl text-emerald-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900">Innovivo Fabtech Pvt Ltd</h3>
+                    <p class="text-xs text-gray-500 mt-2"><i class="fa-solid fa-[#fa-location-dot] fa-location-dot"></i> G1-845 RIICO Industrial area, Khushkhera, Alwar, Rajasthan, 301707</p>
+                    <p class="text-xs text-gray-600 mt-1"><strong>GST:</strong> 08AAICI4283L1Z2</p>
+                    <p class="text-xs text-gray-600"><strong>Contact:</strong> 7988340039, 7607070994</p>
                 </div>
-                <button onclick="checkLogin()" class="w-full bg-blue-600 text-white py-2.5 rounded-lg font-bold hover:bg-blue-700 transition shadow-lg text-sm">Login to ERP</button>
-                <p id="loginError" class="text-xs text-red-500 text-center hidden font-semibold">Galat Username ya Password!</p>
-                <p class="text-xs text-gray-400 text-center mt-2">Default: admin / bigvolt123</p>
+                <button class="mt-6 w-full bg-emerald-600 text-white py-2 rounded-lg font-semibold hover:bg-emerald-700">Open Dashboard &rarr;</button>
+            </div>
+
+            <!-- Company 3 -->
+            <div onclick="selectCompany('c3')" class="bg-white rounded-xl p-6 shadow-xl hover:shadow-2xl transition cursor-pointer border-t-4 border-purple-600 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="bg-purple-100 text-purple-800 text-xs font-bold px-2.5 py-1 rounded">International</span>
+                        <i class="fa-solid fa-[#fa-globe] fa-globe text-2xl text-purple-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900">AR Rehyan International</h3>
+                    <p class="text-xs text-gray-500 mt-2"><i class="fa-solid fa-[#fa-location-dot] fa-location-dot"></i> Plot no G1-844 RIICO Industrial area, Khushkhera, Alwar, Rajasthan, 301707</p>
+                    <p class="text-xs text-gray-600 mt-1"><strong>GST:</strong> 08APLPK2706D1Z4</p>
+                    <p class="text-xs text-gray-600"><strong>Contact:</strong> 7988340039, 7607070994</p>
+                </div>
+                <button class="mt-6 w-full bg-purple-600 text-white py-2 rounded-lg font-semibold hover:bg-purple-700">Open Dashboard &rarr;</button>
             </div>
         </div>
     </div>
 
-    <!-- ================= 2. MAIN APPLICATION ================= -->
-    <div id="mainApp" class="hidden flex-1 flex flex-col">
-
-        <!-- Top Header -->
-        <header class="bg-slate-900 text-white p-4 shadow-lg flex flex-wrap justify-between items-center no-print">
-            <div class="flex items-center space-x-3">
-                <i class="fa-solid fa-industry text-2xl text-blue-400"></i>
-                <div>
-                    <h1 class="text-lg md:text-xl font-bold tracking-wide">Bigvolt Group Operations</h1>
-                    <p class="text-xs text-gray-400">Integrated ERP & HRM Management</p>
-                </div>
-            </div>
-
-            <div class="flex items-center space-x-3 mt-2 sm:mt-0 flex-wrap gap-y-2">
-                <!-- Unit Switcher -->
-                <select id="unitFilter" onchange="switchUnit()" class="bg-slate-800 text-white px-3 py-1.5 rounded border border-slate-700 focus:outline-none text-xs">
-                    <option value="All">All Units (Combined)</option>
-                    <option value="Bigvolt">Bigvolt Transformers</option>
-                    <option value="Innovivo">Innovivo Fabtech (Tanks)</option>
-                    <option value="AR_Rehyan">AR Rehyan (Core Cutting)</option>
-                </select>
-
-                <!-- Head Contacts Button -->
-                <button onclick="openContactsModal()" class="bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded border border-slate-700 text-xs">
-                    <i class="fa-solid fa-phone text-amber-400 mr-1"></i> Head Contacts
-                </button>
-
-                <!-- Company Website Button -->
-                <a id="companyWebBtn" href="https://www.bigvolt.com" target="_blank" class="bg-blue-600 hover:bg-blue-700 px-3 py-1.5 rounded text-xs">
-                    <i class="fa-solid fa-globe mr-1"></i> Website
-                </a>
-
-                <!-- Security/Password Button -->
-                <button onclick="openSecurityModal()" class="bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded border border-slate-700 text-xs">
-                    <i class="fa-solid fa-key text-green-400 mr-1"></i> Passwords
-                </button>
-
-                <!-- Logout Button -->
-                <button onclick="logout()" class="bg-red-600 hover:bg-red-700 px-3 py-1.5 rounded text-xs">
-                    <i class="fa-solid fa-right-from-bracket"></i>
-                </button>
-            </div>
-        </header>
-
-        <!-- Main Navigation Bar -->
-        <nav class="bg-white border-b border-gray-200 shadow-sm overflow-x-auto no-print">
-            <div class="flex space-x-1 p-2 min-w-max text-xs font-medium">
-                <button onclick="showTab('dashboard')" id="btn-dashboard" class="tab-btn px-4 py-2 rounded-md active-tab"><i class="fa-solid fa-chart-line mr-1.5"></i> Dashboard</button>
-                <button onclick="showTab('hr')" id="btn-hr" class="tab-btn px-4 py-2 rounded-md hover:bg-gray-100"><i class="fa-solid fa-users-gear mr-1.5"></i> Human Resources</button>
-                <button onclick="showTab('accounts')" id="btn-accounts" class="tab-btn px-4 py-2 rounded-md hover:bg-gray-100"><i class="fa-solid fa-file-invoice-dollar mr-1.5"></i> Accounts & Finance</button>
-                <button onclick="showTab('store')" id="btn-store" class="tab-btn px-4 py-2 rounded-md hover:bg-gray-100"><i class="fa-solid fa-warehouse mr-1.5"></i> Store & Inventory</button>
-                <button onclick="showTab('catalogue')" id="btn-catalogue" class="tab-btn px-4 py-2 rounded-md hover:bg-gray-100"><i class="fa-solid fa-book-open mr-1.5"></i> Products Catalogue</button>
-            </div>
+    <!-- MAIN PORTAL CONTAINER (Hidden by default) -->
+    <div id="mainPortal" class="hidden flex-1 flex flex-col">
+        <!-- NAVIGATION BAR -->
+        <nav class="bg-slate-800 text-gray-300 flex space-x-2 px-4 pt-2 border-b border-slate-700 no-print overflow-x-auto">
+            <button onclick="switchTab('dashboard')" id="tab-dashboard" class="px-4 py-2 rounded-t-lg font-medium text-sm flex items-center gap-2 active-tab">
+                <i class="fa-solid fa-chart-line"></i> Dashboard
+            </button>
+            <button onclick="switchTab('employees')" id="tab-employees" class="px-4 py-2 rounded-t-lg font-medium text-sm flex items-center gap-2">
+                <i class="fa-solid fa-users"></i> Employees
+            </button>
+            <button onclick="switchTab('attendance')" id="tab-attendance" class="px-4 py-2 rounded-t-lg font-medium text-sm flex items-center gap-2">
+                <i class="fa-solid fa-calendar-check"></i> Monthly Attendance
+            </button>
+            <button onclick="switchTab('hr')" id="tab-hr" class="px-4 py-2 rounded-t-lg font-medium text-sm flex items-center gap-2">
+                <i class="fa-solid fa-file-invoice-dollar"></i> Master Roll & Payroll
+            </button>
+            <button onclick="switchTab('accounts')" id="tab-accounts" class="px-4 py-2 rounded-t-lg font-medium text-sm flex items-center gap-2">
+                <i class="fa-solid fa-receipt"></i> Contractor Payment Slips
+            </button>
         </nav>
 
-        <!-- Main Content Area -->
-        <main class="p-4 md:p-6 max-w-7xl mx-auto flex-1 w-full">
-
-            <!-- MODULE 1: DASHBOARD -->
-            <section id="tab-dashboard" class="tab-content space-y-6">
-                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                    <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200 border-l-4 border-l-blue-600">
-                        <p class="text-xs text-gray-500 font-bold uppercase">Total Workforce</p>
-                        <h3 id="dash-total-emp" class="text-2xl font-bold mt-1">0</h3>
+        <!-- CONTENT AREA -->
+        <main class="p-6 flex-1 bg-gray-50 no-print">
+            
+            <!-- DASHBOARD SECTION -->
+            <section id="section-dashboard" class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="bg-white p-5 rounded-lg shadow border-l-4 border-blue-500">
+                        <p class="text-xs text-gray-500 uppercase font-bold">Total Staff</p>
+                        <h3 class="text-2xl font-bold mt-1" id="dashTotalEmp">0</h3>
                     </div>
-                    <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200 border-l-4 border-l-green-600">
-                        <p class="text-xs text-gray-500 font-bold uppercase">Today Present</p>
-                        <h3 id="dash-present-emp" class="text-2xl font-bold mt-1 text-green-600">0</h3>
+                    <div class="bg-white p-5 rounded-lg shadow border-l-4 border-emerald-500">
+                        <p class="text-xs text-gray-500 uppercase font-bold">Today Present</p>
+                        <h3 class="text-2xl font-bold mt-1 text-emerald-600" id="dashPresent">0</h3>
                     </div>
-                    <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200 border-l-4 border-l-red-600">
-                        <p class="text-xs text-gray-500 font-bold uppercase">Today Cash Expense</p>
-                        <h3 id="dash-today-expense" class="text-2xl font-bold mt-1 text-red-600">₹ 0</h3>
+                    <div class="bg-white p-5 rounded-lg shadow border-l-4 border-amber-500">
+                        <p class="text-xs text-gray-500 uppercase font-bold">Total Invoices</p>
+                        <h3 class="text-2xl font-bold mt-1 text-amber-600" id="dashInvoices">0</h3>
                     </div>
-                    <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200 border-l-4 border-l-amber-600">
-                        <p class="text-xs text-gray-500 font-bold uppercase">Stock Low Items</p>
-                        <h3 id="dash-low-stock" class="text-2xl font-bold mt-1 text-amber-600">0</h3>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
-                        <div class="flex items-center justify-between border-b pb-2 mb-3">
-                            <h4 class="font-bold text-gray-800"><i class="fa-solid fa-bolt text-amber-500 mr-2"></i>Bigvolt Transformers</h4>
-                            <span id="bg-emp-count" class="bg-amber-100 text-amber-800 text-xs font-bold px-2 py-0.5 rounded">0 Workers</span>
-                        </div>
-                        <p class="text-xs text-gray-600">Power & Distribution Transformers, HT Panels, Oil Transformers.</p>
-                    </div>
-                    <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
-                        <div class="flex items-center justify-between border-b pb-2 mb-3">
-                            <h4 class="font-bold text-gray-800"><i class="fa-solid fa-industry text-blue-500 mr-2"></i>Innovivo Fabtech</h4>
-                            <span id="in-emp-count" class="bg-blue-100 text-blue-800 text-xs font-bold px-2 py-0.5 rounded">0 Workers</span>
-                        </div>
-                        <p class="text-xs text-gray-600">Transformer Tanks, Corrugated Fins, Heavy Fabrications & Welding.</p>
-                    </div>
-                    <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
-                        <div class="flex items-center justify-between border-b pb-2 mb-3">
-                            <h4 class="font-bold text-gray-800"><i class="fa-solid fa-scissors text-green-500 mr-2"></i>AR Rehyan</h4>
-                            <span id="ar-emp-count" class="bg-green-100 text-green-800 text-xs font-bold px-2 py-0.5 rounded">0 Workers</span>
-                        </div>
-                        <p class="text-xs text-gray-600">CRGO Core Cutting, Lamination Processing, Core Assembly.</p>
+                    <div class="bg-white p-5 rounded-lg shadow border-l-4 border-purple-500">
+                        <p class="text-xs text-gray-500 uppercase font-bold">Gross Payout</p>
+                        <h3 class="text-2xl font-bold mt-1 text-purple-600" id="dashPayout">₹0</h3>
                     </div>
                 </div>
             </section>
 
-            <!-- MODULE 2: HUMAN RESOURCES (HRM) -->
-            <section id="tab-hr" class="tab-content space-y-4 hidden">
-                <!-- HR Sub Navigation -->
-                <div class="bg-slate-800 p-2 rounded-xl text-white flex space-x-2 text-xs overflow-x-auto">
-                    <button onclick="showSubHr('emp-dir')" id="subhr-btn-emp-dir" class="subhr-btn px-3 py-1.5 rounded active-subtab"><i class="fa-solid fa-address-card mr-1"></i> Employee Directory</button>
-                    <button onclick="showSubHr('kyc')" id="subhr-btn-kyc" class="subhr-btn px-3 py-1.5 rounded hover:bg-slate-700"><i class="fa-solid fa-id-card mr-1"></i> Aadhaar & ESIC KYC</button>
-                    <button onclick="showSubHr('att')" id="subhr-btn-att" class="subhr-btn px-3 py-1.5 rounded hover:bg-slate-700"><i class="fa-solid fa-calendar-check mr-1"></i> Attendance & Overtime</button>
-                    <button onclick="showSubHr('payroll')" id="subhr-btn-payroll" class="subhr-btn px-3 py-1.5 rounded hover:bg-slate-700"><i class="fa-solid fa-calculator mr-1"></i> Payroll & Advance</button>
-                </div>
-
-                <!-- Sub-tab 1: Employee Directory -->
-                <div id="subhr-emp-dir" class="subhr-content space-y-3">
-                    <div class="flex justify-between items-center bg-white p-4 rounded-xl shadow-sm border border-gray-200">
-                        <h3 class="text-sm font-bold">Employee Staff Directory</h3>
-                        <button onclick="openEmpModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold">+ Add New Employee</button>
-                    </div>
-                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-x-auto">
-                        <table class="w-full text-left text-xs">
-                            <thead class="bg-gray-50 border-b">
-                                <tr>
-                                    <th class="p-3">Name</th>
-                                    <th class="p-3">Unit</th>
-                                    <th class="p-3">Designation</th>
-                                    <th class="p-3">Phone</th>
-                                    <th class="p-3">Daily Wage (₹)</th>
-                                    <th class="p-3">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody id="empTableBody"></tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Sub-tab 2: Aadhaar & ESIC KYC -->
-                <div id="subhr-kyc" class="subhr-content space-y-3 hidden">
-                    <div class="flex flex-wrap justify-between items-center bg-white p-4 rounded-xl shadow-sm border border-gray-200 gap-2">
+            <!-- EMPLOYEES SECTION -->
+            <section id="section-employees" class="hidden space-y-6">
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <h3 class="text-lg font-bold mb-4 flex items-center gap-2"><i class="fa-solid fa-user-plus text-blue-600"></i> Add New Employee</h3>
+                    <form id="empForm" onsubmit="addEmployee(event)" class="grid grid-cols-1 md:grid-cols-4 gap-4">
                         <div>
-                            <h3 class="text-sm font-bold">Aadhaar Online Download & ESIC Portal</h3>
-                            <p class="text-xs text-gray-500">Verify new employee Aadhaar & ESIC registration</p>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1">Employee Name</label>
+                            <input type="text" id="empName" required class="w-full border p-2 rounded text-sm">
                         </div>
-                        <div class="flex space-x-2">
-                            <a href="https://myaadhaar.uidai.gov.in/genricDownloadAadhaar" target="_blank" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded text-xs font-semibold flex items-center">
-                                <i class="fa-solid fa-download mr-1.5"></i> Aadhaar Download Portal
-                            </a>
-                            <a href="https://www.esic.gov.in" target="_blank" class="bg-amber-600 hover:bg-amber-700 text-white px-3 py-1.5 rounded text-xs font-semibold flex items-center">
-                                <i class="fa-solid fa-arrow-up-right-from-square mr-1.5"></i> ESIC Portal
-                            </a>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1">Father's Name</label>
+                            <input type="text" id="empFather" required class="w-full border p-2 rounded text-sm">
                         </div>
-                    </div>
-                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-x-auto">
-                        <table class="w-full text-left text-xs">
-                            <thead class="bg-gray-50 border-b">
-                                <tr>
-                                    <th class="p-3">Employee Name</th>
-                                    <th class="p-3">Unit</th>
-                                    <th class="p-3">KYC Status</th>
-                                    <th class="p-3">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody id="kycTableBody"></tbody>
-                        </table>
-                    </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1">Date of Joining</label>
+                            <input type="date" id="empDOJ" required class="w-full border p-2 rounded text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1">Designation</label>
+                            <input type="text" id="empRole" placeholder="e.g. Technician" required class="w-full border p-2 rounded text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1">Monthly Basic Salary (₹)</label>
+                            <input type="number" id="empSalary" required class="w-full border p-2 rounded text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1">ESIC Applicable?</label>
+                            <select id="empESIC" class="w-full border p-2 rounded text-sm">
+                                <option value="Yes">Yes (0.75% Deduction)</option>
+                                <option value="No">No</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1">Upload Photo</label>
+                            <input type="file" id="empPhoto" accept="image/*" class="w-full border p-1 rounded text-xs">
+                        </div>
+                        <div class="flex items-end">
+                            <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded text-sm font-bold hover:bg-blue-700">Save Employee</button>
+                        </div>
+                    </form>
                 </div>
 
-                <!-- Sub-tab 3: Attendance -->
-                <div id="subhr-att" class="subhr-content space-y-3 hidden">
-                    <div class="flex justify-between items-center bg-white p-4 rounded-xl shadow-sm border border-gray-200">
-                        <h3 class="text-sm font-bold">Daily Attendance Log</h3>
-                        <button onclick="saveAttendance()" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded text-xs font-semibold">Save Attendance Log</button>
-                    </div>
-                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-x-auto">
-                        <table class="w-full text-left text-xs">
-                            <thead class="bg-gray-50 border-b">
-                                <tr>
-                                    <th class="p-3">Employee Name</th>
-                                    <th class="p-3">Unit</th>
-                                    <th class="p-3">Status</th>
-                                    <th class="p-3">OT Hours</th>
-                                </tr>
-                            </thead>
-                            <tbody id="attTableBody"></tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Sub-tab 4: Payroll -->
-                <div id="subhr-payroll" class="subhr-content space-y-3 hidden">
-                    <div class="flex justify-between items-center bg-white p-4 rounded-xl shadow-sm border border-gray-200">
-                        <h3 class="text-sm font-bold">Monthly Payroll & Advance Deduction</h3>
-                        <button onclick="exportCSV('payroll')" class="bg-slate-800 text-white px-3 py-1.5 rounded text-xs hover:bg-slate-900"><i class="fa-solid fa-file-excel mr-1"></i> Export Payroll</button>
-                    </div>
-                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-x-auto">
-                        <table class="w-full text-left text-xs">
-                            <thead class="bg-gray-50 border-b">
-                                <tr>
-                                    <th class="p-3">Employee</th>
-                                    <th class="p-3">Daily Rate</th>
-                                    <th class="p-3">Days Worked</th>
-                                    <th class="p-3">Base Pay</th>
-                                    <th class="p-3 text-red-600">Advance Taken (₹)</th>
-                                    <th class="p-3 font-bold text-green-700">Net Payable</th>
-                                    <th class="p-3">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody id="payrollTableBody"></tbody>
-                        </table>
-                    </div>
+                <!-- EMPLOYEE TABLE -->
+                <div class="bg-white rounded-lg shadow overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-sm">
+                        <thead class="bg-gray-100 border-b">
+                            <tr>
+                                <th class="p-3">Photo</th>
+                                <th class="p-3">Name</th>
+                                <th class="p-3">Father's Name</th>
+                                <th class="p-3">Joining Date</th>
+                                <th class="p-3">Role</th>
+                                <th class="p-3">Salary</th>
+                                <th class="p-3">ESIC</th>
+                            </tr>
+                        </thead>
+                        <tbody id="empTableBody">
+                            <!-- Dynamic Content -->
+                        </tbody>
+                    </table>
                 </div>
             </section>
 
-            <!-- MODULE 3: ACCOUNTS & FINANCE -->
-            <section id="tab-accounts" class="tab-content space-y-4 hidden">
-                <!-- Accounts Sub Navigation -->
-                <div class="bg-slate-800 p-2 rounded-xl text-white flex space-x-2 text-xs overflow-x-auto">
-                    <button onclick="showSubAcc('expenses')" id="subacc-btn-expenses" class="subacc-btn px-3 py-1.5 rounded active-subtab"><i class="fa-solid fa-wallet mr-1"></i> Daily Cash Expenses</button>
-                    <button onclick="showSubAcc('invoices')" id="subacc-btn-invoices" class="subacc-btn px-3 py-1.5 rounded hover:bg-slate-700"><i class="fa-solid fa-file-invoice mr-1"></i> Purchase & Sale Invoices</button>
-                    <button onclick="showSubAcc('contractor')" id="subacc-btn-contractor" class="subacc-btn px-3 py-1.5 rounded hover:bg-slate-700"><i class="fa-solid fa-hard-hat mr-1"></i> Contractor Payment & Bill</button>
-                </div>
-
-                <!-- Sub-tab 1: Daily Cash Expenses -->
-                <div id="subacc-expenses" class="subacc-content space-y-3">
-                    <div class="flex justify-between items-center bg-white p-4 rounded-xl shadow-sm border border-gray-200">
-                        <h3 class="text-sm font-bold">Daily Cash Expense Log</h3>
-                        <button onclick="openExpenseModal()" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold">+ Log Expense</button>
-                    </div>
-                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-x-auto">
-                        <table class="w-full text-left text-xs">
-                            <thead class="bg-gray-50 border-b">
-                                <tr>
-                                    <th class="p-3">Date</th>
-                                    <th class="p-3">Unit</th>
-                                    <th class="p-3">Details / Expense Head</th>
-                                    <th class="p-3">Paid To</th>
-                                    <th class="p-3">Amount (₹)</th>
-                                </tr>
-                            </thead>
-                            <tbody id="expenseTableBody"></tbody>
-                        </table>
+            <!-- MONTHLY ATTENDANCE SECTION -->
+            <section id="section-attendance" class="hidden space-y-6">
+                <div class="bg-white p-4 rounded-lg shadow flex justify-between items-center">
+                    <h3 class="font-bold text-gray-800">Monthly Attendance Grid</h3>
+                    <div class="flex gap-3">
+                        <input type="month" id="attMonth" value="2026-10" onchange="renderAttendanceGrid()" class="border p-2 rounded text-sm">
                     </div>
                 </div>
-
-                <!-- Sub-tab 2: Purchase & Sale Invoices -->
-                <div id="subacc-invoices" class="subacc-content space-y-3 hidden">
-                    <div class="flex justify-between items-center bg-white p-4 rounded-xl shadow-sm border border-gray-200">
-                        <h3 class="text-sm font-bold">Purchase & Sales Bills / Invoices</h3>
-                        <button onclick="openInvoiceModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold">+ Add Bill / Invoice</button>
-                    </div>
-                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-x-auto">
-                        <table class="w-full text-left text-xs border-collapse">
-                            <thead class="bg-slate-800 text-white">
-                                <tr>
-                                    <th class="p-2 border">Type</th>
-                                    <th class="p-2 border">Invoice No.</th>
-                                    <th class="p-2 border">Date</th>
-                                    <th class="p-2 border">Party / Vendor</th>
-                                    <th class="p-2 border">Item Details</th>
-                                    <th class="p-2 border">Total Amount (₹)</th>
-                                    <th class="p-2 border">Payment Status</th>
-                                    <th class="p-2 border">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody id="invoiceTableBody"></tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Sub-tab 3: Contractor Payment Template -->
-                <div id="subacc-contractor" class="subacc-content space-y-3 hidden">
-                    <div class="flex justify-between items-center bg-white p-4 rounded-xl shadow-sm border border-gray-200">
-                        <h3 class="text-sm font-bold">Job Work Contractor Bill Generator</h3>
-                    </div>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- Input Form -->
-                        <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200 space-y-3">
-                            <h4 class="font-bold text-xs text-slate-700 border-b pb-2 uppercase">Contractor Bill Details</h4>
-                            <div class="grid grid-cols-2 gap-2">
-                                <div>
-                                    <label class="text-xs font-semibold">Contractor Name</label>
-                                    <input type="text" id="conName" value="Sharma Labour Works" class="w-full border p-1.5 rounded text-xs mt-1">
-                                </div>
-                                <div>
-                                    <label class="text-xs font-semibold">Job Work Type</label>
-                                    <input type="text" id="conJob" value="Tank Fabrication & Welding" class="w-full border p-1.5 rounded text-xs mt-1">
-                                </div>
-                            </div>
-                            <div class="grid grid-cols-3 gap-2">
-                                <div>
-                                    <label class="text-xs font-semibold">Qty / Weight</label>
-                                    <input type="number" id="conQty" value="12" oninput="calcContractorBill()" class="w-full border p-1.5 rounded text-xs mt-1">
-                                </div>
-                                <div>
-                                    <label class="text-xs font-semibold">Rate (₹)</label>
-                                    <input type="number" id="conRate" value="1500" oninput="calcContractorBill()" class="w-full border p-1.5 rounded text-xs mt-1">
-                                </div>
-                                <div>
-                                    <label class="text-xs font-semibold">Advance Taken (₹)</label>
-                                    <input type="number" id="conAdv" value="2000" oninput="calcContractorBill()" class="w-full border p-1.5 rounded text-xs mt-1">
-                                </div>
-                            </div>
-                            <div class="grid grid-cols-2 gap-2">
-                                <div>
-                                    <label class="text-xs font-semibold">Fooding Deduction (₹)</label>
-                                    <input type="number" id="conFood" value="1000" oninput="calcContractorBill()" class="w-full border p-1.5 rounded text-xs mt-1">
-                                </div>
-                                <div>
-                                    <label class="text-xs font-semibold">TDS Rate (%)</label>
-                                    <input type="number" id="conTdsRate" value="1" readonly class="w-full border p-1.5 rounded text-xs mt-1 bg-gray-100">
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Bill Summary Card Template -->
-                        <div class="bg-white p-5 rounded-xl shadow-md border border-slate-300 flex flex-col justify-between">
-                            <div>
-                                <div class="flex justify-between items-center border-b pb-2 mb-3">
-                                    <h4 class="font-bold text-sm text-blue-900">CONTRACTOR PAYMENT SLIP</h4>
-                                    <span id="conInvNo" class="text-xs font-bold bg-gray-100 px-2 py-0.5 rounded border">INV-CON-2026-001</span>
-                                </div>
-                                <div class="space-y-1 text-xs">
-                                    <p><strong>Contractor:</strong> <span id="lblConName">Sharma Labour Works</span></p>
-                                    <p><strong>Job Work:</strong> <span id="lblConJob">Tank Fabrication & Welding</span></p>
-                                    <hr class="my-2">
-                                    <div class="flex justify-between"><span>Gross Amount:</span><span font-semibold id="lblGross">₹ 18,000</span></div>
-                                    <div class="flex justify-between text-red-600"><span>Advance Deduction:</span><span id="lblAdv">- ₹ 2,000</span></div>
-                                    <div class="flex justify-between text-red-600"><span>Fooding Deduction:</span><span id="lblFood">- ₹ 1,000</span></div>
-                                    <div class="flex justify-between text-red-600"><span>1% TDS Deduction:</span><span id="lblTds">- ₹ 180</span></div>
-                                    <hr class="my-2">
-                                    <div class="flex justify-between text-sm font-bold text-green-700"><span>Net Payable Amount:</span><span id="lblNetPay">₹ 14,820</span></div>
-                                </div>
-                            </div>
-                            <button onclick="window.print()" class="mt-4 bg-slate-900 text-white py-2 rounded text-xs font-bold hover:bg-slate-800"><i class="fa-solid fa-print mr-1"></i> Print Contractor Invoice</button>
-                        </div>
-                    </div>
+                <div class="bg-white rounded-lg shadow overflow-x-auto p-4">
+                    <table class="w-full border-collapse text-xs text-center border">
+                        <thead>
+                            <tr class="bg-slate-800 text-white" id="attHeader">
+                                <th class="p-2 border">Emp Name</th>
+                                <th class="p-2 border">In / Out Time</th>
+                                <!-- Days 1 to 30/31 dynamically inserted -->
+                            </tr>
+                        </thead>
+                        <tbody id="attTableBody">
+                            <!-- Attendance Grid Body -->
+                        </tbody>
+                    </table>
                 </div>
             </section>
 
-            <!-- MODULE 4: STORE & INVENTORY -->
-            <section id="tab-store" class="tab-content space-y-4 hidden">
-                <!-- Store Sub Navigation -->
-                <div class="bg-slate-800 p-2 rounded-xl text-white flex space-x-2 text-xs overflow-x-auto">
-                    <button onclick="showSubStore('stock')" id="substore-btn-stock" class="substore-btn px-3 py-1.5 rounded active-subtab"><i class="fa-solid fa-boxes-stacked mr-1"></i> Store Stock</button>
-                    <button onclick="showSubStore('inward')" id="substore-btn-inward" class="substore-btn px-3 py-1.5 rounded hover:bg-slate-700"><i class="fa-solid fa-truck-ramp-box mr-1"></i> Inward Register</button>
-                    <button onclick="showSubStore('outward')" id="substore-btn-outward" class="substore-btn px-3 py-1.5 rounded hover:bg-slate-700"><i class="fa-solid fa-dolly mr-1"></i> Outward Register</button>
-                    <button onclick="showSubStore('production')" id="substore-btn-production" class="substore-btn px-3 py-1.5 rounded hover:bg-slate-700"><i class="fa-solid fa-gears mr-1"></i> Work Orders & Production</button>
-                    <button onclick="showSubStore('vendors')" id="substore-btn-vendors" class="substore-btn px-3 py-1.5 rounded hover:bg-slate-700"><i class="fa-solid fa-address-book mr-1"></i> Purchase Orders & Vendors</button>
+            <!-- HR MASTER ROLL SECTION -->
+            <section id="section-hr" class="hidden space-y-6">
+                <div class="bg-white p-4 rounded-lg shadow flex justify-between items-center">
+                    <h3 class="font-bold text-gray-800">Master Salary Roll Sheet</h3>
+                    <button onclick="window.print()" class="bg-emerald-600 text-white px-4 py-2 rounded text-sm font-semibold"><i class="fa-solid fa-[#fa-print] fa-print"></i> Print Master Roll</button>
                 </div>
-
-                <!-- Sub-tab 1: Store Stock -->
-                <div id="substore-stock" class="substore-content space-y-3">
-                    <div class="flex justify-between items-center bg-white p-4 rounded-xl shadow-sm border border-gray-200">
-                        <h3 class="text-sm font-bold">Store Raw Material & Alert Levels</h3>
-                        <button onclick="openItemModal()" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold">+ Add Store Item</button>
-                    </div>
-                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-x-auto">
-                        <table class="w-full text-left text-xs">
-                            <thead class="bg-gray-50 border-b">
-                                <tr>
-                                    <th class="p-3">Item Name</th>
-                                    <th class="p-3">Unit</th>
-                                    <th class="p-3">Current Stock</th>
-                                    <th class="p-3">Min Requirement</th>
-                                    <th class="p-3">Stock Status</th>
-                                    <th class="p-3">Update Stock</th>
-                                </tr>
-                            </thead>
-                            <tbody id="inventoryTableBody"></tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Sub-tab 2: Inward Register -->
-                <div id="substore-inward" class="substore-content space-y-3 hidden">
-                    <div class="flex justify-between items-center bg-white p-4 rounded-xl shadow-sm border border-gray-200">
-                        <h3 class="text-sm font-bold">Inward Material Vehicle Gate Register</h3>
-                        <button onclick="openInwardModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold">+ Add Inward Entry</button>
-                    </div>
-                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-x-auto">
-                        <table class="w-full text-left text-xs border-collapse">
-                            <thead class="bg-slate-800 text-white border-b">
-                                <tr>
-                                    <th class="p-2 border">Date</th>
-                                    <th class="p-2 border">Invoice No.</th>
-                                    <th class="p-2 border">Supplier / Vendor</th>
-                                    <th class="p-2 border">Material Name</th>
-                                    <th class="p-2 border">Qty Received</th>
-                                    <th class="p-2 border">Vehicle No.</th>
-                                </tr>
-                            </thead>
-                            <tbody id="inwardTableBody"></tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Sub-tab 3: Outward Register -->
-                <div id="substore-outward" class="substore-content space-y-3 hidden">
-                    <div class="flex justify-between items-center bg-white p-4 rounded-xl shadow-sm border border-gray-200">
-                        <h3 class="text-sm font-bold">Outward Material Dispatch Register</h3>
-                    </div>
-                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-x-auto p-4">
-                        <p class="text-xs text-gray-500">Outward dispatch gate passes and finished goods exit logs.</p>
-                    </div>
-                </div>
-
-                <!-- Sub-tab 4: Production & Work Orders -->
-                <div id="substore-production" class="substore-content space-y-3 hidden">
-                    <div class="flex justify-between items-center bg-white p-4 rounded-xl shadow-sm border border-gray-200">
-                        <h3 class="text-sm font-bold">Active Work Orders & Production Progress</h3>
-                    </div>
-                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 space-y-3">
-                        <div class="p-3 bg-blue-50 border border-blue-200 rounded-lg text-xs flex justify-between items-center">
-                            <div>
-                                <span class="font-bold text-blue-900">WO-2026-88: 250 KVA Transformer Tank Assembly</span>
-                                <p class="text-gray-600 mt-1">Client: State Electricity Board | Progress: 75% Complete</p>
-                            </div>
-                            <span class="bg-blue-600 text-white px-2 py-1 rounded text-xs font-bold">In Production</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Sub-tab 5: Purchase Orders & Vendors -->
-                <div id="substore-vendors" class="substore-content space-y-3 hidden">
-                    <div class="flex justify-between items-center bg-white p-4 rounded-xl shadow-sm border border-gray-200">
-                        <h3 class="text-sm font-bold">Vendor Directory & Purchase Order Contacts</h3>
-                        <button onclick="openVendorModal()" class="bg-slate-800 hover:bg-slate-900 text-white px-3 py-1.5 rounded-lg text-xs font-semibold">+ Add Vendor</button>
-                    </div>
-                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-x-auto">
-                        <table class="w-full text-left text-xs">
-                            <thead class="bg-gray-50 border-b">
-                                <tr>
-                                    <th class="p-3">Vendor/Firm Name</th>
-                                    <th class="p-3">Supplied Items</th>
-                                    <th class="p-3">Location / Address</th>
-                                    <th class="p-3">Contact Person</th>
-                                    <th class="p-3">Phone</th>
-                                </tr>
-                            </thead>
-                            <tbody id="vendorTableBody"></tbody>
-                        </table>
-                    </div>
+                <div class="bg-white rounded-lg shadow overflow-x-auto p-4">
+                    <table class="w-full border-collapse text-xs text-left border">
+                        <thead>
+                            <tr class="bg-gray-200">
+                                <th class="p-2 border">Emp ID</th>
+                                <th class="p-2 border">Employee Name</th>
+                                <th class="p-2 border">Company</th>
+                                <th class="p-2 border">Basic Salary</th>
+                                <th class="p-2 border">P Days</th>
+                                <th class="p-2 border">Gross Salary</th>
+                                <th class="p-2 border">ESIC Deduction</th>
+                                <th class="p-2 border">Net Payable</th>
+                            </tr>
+                        </thead>
+                        <tbody id="masterRollBody">
+                            <!-- Master Roll Body -->
+                        </tbody>
+                    </table>
                 </div>
             </section>
 
-            <!-- MODULE 5: PRODUCTS CATALOGUE -->
-            <section id="tab-catalogue" class="tab-content space-y-4 hidden">
-                <div class="flex justify-between items-center bg-white p-4 rounded-xl shadow-sm border border-gray-200">
-                    <h2 class="text-md font-bold text-gray-800">Products Manufacturing Catalogue</h2>
+            <!-- CONTRACTOR PAYMENT SLIP / ACCOUNTS -->
+            <section id="section-accounts" class="hidden space-y-6">
+                <div class="bg-white p-6 rounded-lg shadow no-print">
+                    <h3 class="text-lg font-bold mb-4">Generate Contractor Payment Invoice</h3>
+                    <form id="invoiceForm" onsubmit="generateInvoice(event)" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold mb-1">Contractor Name</label>
+                            <input type="text" id="invContractor" required class="w-full border p-2 rounded text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold mb-1">Work Description</label>
+                            <input type="text" id="invWork" placeholder="e.g. Fabrication Work" required class="w-full border p-2 rounded text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold mb-1">Amount (₹)</label>
+                            <input type="number" id="invAmount" required class="w-full border p-2 rounded text-sm">
+                        </div>
+                        <div class="flex items-end">
+                            <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded text-sm font-bold hover:bg-blue-700">Create & Preview Slip</button>
+                        </div>
+                    </form>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="bg-white rounded-xl shadow border p-4">
-                        <div class="h-36 bg-amber-50 rounded flex items-center justify-center text-amber-500 mb-3 border border-amber-200"><i class="fa-solid fa-bolt-lightning text-4xl"></i></div>
-                        <span class="text-xs bg-amber-100 text-amber-800 px-2 py-0.5 rounded font-bold">Bigvolt Transformers</span>
-                        <h3 class="font-bold text-sm mt-2">Power & Distribution Transformers</h3>
-                        <p class="text-xs text-gray-600 mt-1">High grade copper wound transformers ranging from 11KV to 33KV.</p>
+                <!-- CANVA STYLE INVOICE TEMPLATE (PRINT READY) -->
+                <div id="invoiceTemplate" class="bg-white p-8 rounded-lg shadow-2xl max-w-4xl mx-auto border border-gray-300 hidden">
+                    <div class="flex justify-between items-start border-b-2 border-blue-600 pb-4">
+                        <div>
+                            <h2 class="text-2xl font-extrabold text-blue-900" id="invCompName">COMPANY NAME</h2>
+                            <p class="text-xs text-gray-600 max-w-md mt-1" id="invCompAddr">Address</p>
+                            <p class="text-xs text-gray-700 font-bold mt-1" id="invCompGST">GSTIN: </p>
+                            <p class="text-xs text-gray-700" id="invCompContact">Contact: </p>
+                        </div>
+                        <div class="text-right">
+                            <span class="bg-blue-900 text-white font-bold text-sm px-3 py-1 rounded">PAYMENT VOUCHER</span>
+                            <p class="text-xs text-gray-500 mt-2">Invoice No: <strong id="invNum" class="text-gray-800">INV-001</strong></p>
+                            <p class="text-xs text-gray-500">Date: <strong id="invDate">07/10/2026</strong></p>
+                        </div>
                     </div>
 
-                    <div class="bg-white rounded-xl shadow border p-4">
-                        <div class="h-36 bg-blue-50 rounded flex items-center justify-center text-blue-500 mb-3 border border-blue-200"><i class="fa-solid fa-box text-4xl"></i></div>
-                        <span class="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded font-bold">Innovivo Fabtech</span>
-                        <h3 class="font-bold text-sm mt-2">Corrugated Transformer Tanks</h3>
-                        <p class="text-xs text-gray-600 mt-1">Precision welded leakage-tested MS tanks with radiator fins.</p>
+                    <div class="my-6">
+                        <p class="text-xs text-gray-500 uppercase font-bold">Paid To Contractor:</p>
+                        <h4 class="text-lg font-bold text-gray-800" id="invDispContractor">-</h4>
                     </div>
 
-                    <div class="bg-white rounded-xl shadow border p-4">
-                        <div class="h-36 bg-green-50 rounded flex items-center justify-center text-green-500 mb-3 border border-green-200"><i class="fa-solid fa-scissors text-4xl"></i></div>
-                        <span class="text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded font-bold">AR Rehyan</span>
-                        <h3 class="font-bold text-sm mt-2">CRGO Core Lamination</h3>
-                        <p class="text-xs text-gray-600 mt-1">Prime CRGO steel sheets with precision angle slitting & core cutting.</p>
+                    <table class="w-full border-collapse my-4 text-sm">
+                        <thead>
+                            <tr class="bg-blue-900 text-white">
+                                <th class="p-2 border text-left">Sr.</th>
+                                <th class="p-2 border text-left">Description of Work</th>
+                                <th class="p-2 border text-right">Amount (₹)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="p-2 border">1</td>
+                                <td class="p-2 border" id="invDispWork">-</td>
+                                <td class="p-2 border text-right font-bold" id="invDispAmount">₹0.00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="flex justify-between items-end mt-16 pt-8 border-t">
+                        <div class="text-center">
+                            <div class="w-40 border-b border-gray-400 mb-1"></div>
+                            <p class="text-xs font-bold text-gray-600">Contractor Signature</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="w-40 border-b border-gray-400 mb-1"></div>
+                            <p class="text-xs font-bold text-gray-600">Verified By (Manager)</p>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 text-center no-print">
+                        <button onclick="window.print()" class="bg-emerald-600 text-white px-6 py-2 rounded font-bold hover:bg-emerald-700"><i class="fa-solid fa-[#fa-download] fa-download"></i> Download / Print PDF</button>
                     </div>
                 </div>
             </section>
@@ -525,522 +332,202 @@
         </main>
     </div>
 
-    <!-- ================= MODALS ================= -->
-
-    <!-- Employee Modal -->
-    <div id="empModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 p-4">
-        <div class="bg-white p-6 rounded-xl w-full max-w-md space-y-3">
-            <h3 class="text-md font-bold">Add New Employee</h3>
-            <input type="text" id="empName" placeholder="Full Name" class="w-full border p-2 rounded text-xs">
-            <select id="empUnit" class="w-full border p-2 rounded text-xs">
-                <option value="Bigvolt">Bigvolt Transformers</option>
-                <option value="Innovivo">Innovivo Fabtech</option>
-                <option value="AR_Rehyan">AR Rehyan</option>
-            </select>
-            <input type="text" id="empDesig" placeholder="Designation (e.g., Welder, Operator)" class="w-full border p-2 rounded text-xs">
-            <input type="text" id="empPhone" placeholder="Phone Number" class="w-full border p-2 rounded text-xs">
-            <input type="number" id="empRate" placeholder="Daily Wage Rate (₹)" class="w-full border p-2 rounded text-xs">
-            <div class="flex justify-end space-x-2 pt-2">
-                <button onclick="closeEmpModal()" class="px-3 py-1 text-xs border rounded">Cancel</button>
-                <button onclick="addEmployee()" class="px-3 py-1 text-xs bg-blue-600 text-white rounded">Save</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Expense Modal -->
-    <div id="expenseModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 p-4">
-        <div class="bg-white p-6 rounded-xl w-full max-w-md space-y-3">
-            <h3 class="text-md font-bold">Log Daily Cash Expense</h3>
-            <input type="date" id="expDate" class="w-full border p-2 rounded text-xs">
-            <select id="expUnit" class="w-full border p-2 rounded text-xs">
-                <option value="Bigvolt">Bigvolt Transformers</option>
-                <option value="Innovivo">Innovivo Fabtech</option>
-                <option value="AR_Rehyan">AR Rehyan</option>
-            </select>
-            <input type="text" id="expDetail" placeholder="Expense Head / Details" class="w-full border p-2 rounded text-xs">
-            <input type="text" id="expPaidTo" placeholder="Paid To (Person/Shop)" class="w-full border p-2 rounded text-xs">
-            <input type="number" id="expAmount" placeholder="Amount (₹)" class="w-full border p-2 rounded text-xs">
-            <div class="flex justify-end space-x-2 pt-2">
-                <button onclick="closeExpenseModal()" class="px-3 py-1 text-xs border rounded">Cancel</button>
-                <button onclick="addExpense()" class="px-3 py-1 text-xs bg-red-600 text-white rounded">Save Expense</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Invoice Modal -->
-    <div id="invoiceModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 p-4">
-        <div class="bg-white p-6 rounded-xl w-full max-w-md space-y-3">
-            <h3 class="text-md font-bold">Add Purchase / Sale Bill</h3>
-            <select id="invType" class="w-full border p-2 rounded text-xs">
-                <option value="Purchase">Purchase Bill</option>
-                <option value="Sale">Sale Invoice</option>
-            </select>
-            <input type="text" id="invNo" placeholder="Invoice Number" class="w-full border p-2 rounded text-xs">
-            <input type="date" id="invDate" class="w-full border p-2 rounded text-xs">
-            <input type="text" id="invParty" placeholder="Party / Vendor Name" class="w-full border p-2 rounded text-xs">
-            <input type="text" id="invItem" placeholder="Item Details" class="w-full border p-2 rounded text-xs">
-            <input type="number" id="invAmt" placeholder="Total Amount (₹)" class="w-full border p-2 rounded text-xs">
-            <select id="invStatus" class="w-full border p-2 rounded text-xs">
-                <option value="Payment Done">Payment Done</option>
-                <option value="Payment Pending">Payment Pending</option>
-            </select>
-            <div class="flex justify-end space-x-2 pt-2">
-                <button onclick="closeInvoiceModal()" class="px-3 py-1 text-xs border rounded">Cancel</button>
-                <button onclick="addInvoice()" class="px-3 py-1 text-xs bg-blue-600 text-white rounded">Save Bill</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Item Modal -->
-    <div id="itemModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 p-4">
-        <div class="bg-white p-6 rounded-xl w-full max-w-md space-y-3">
-            <h3 class="text-md font-bold">Add Store Item</h3>
-            <input type="text" id="itemName" placeholder="Item Name" class="w-full border p-2 rounded text-xs">
-            <select id="itemUnit" class="w-full border p-2 rounded text-xs">
-                <option value="Bigvolt">Bigvolt Transformers</option>
-                <option value="Innovivo">Innovivo Fabtech</option>
-                <option value="AR_Rehyan">AR Rehyan</option>
-            </select>
-            <input type="number" id="itemStock" placeholder="Current Stock Qty" class="w-full border p-2 rounded text-xs">
-            <input type="number" id="itemMin" placeholder="Minimum Requirement Level" class="w-full border p-2 rounded text-xs">
-            <div class="flex justify-end space-x-2 pt-2">
-                <button onclick="closeItemModal()" class="px-3 py-1 text-xs border rounded">Cancel</button>
-                <button onclick="addItem()" class="px-3 py-1 text-xs bg-green-600 text-white rounded">Save Item</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Inward Modal -->
-    <div id="inwardModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 p-4">
-        <div class="bg-white p-6 rounded-xl w-full max-w-md space-y-3">
-            <h3 class="text-md font-bold">Log Inward Entry</h3>
-            <input type="date" id="inDate" class="w-full border p-2 rounded text-xs">
-            <input type="text" id="inInvoice" placeholder="Invoice Number" class="w-full border p-2 rounded text-xs">
-            <input type="text" id="inVendor" placeholder="Supplier Name" class="w-full border p-2 rounded text-xs">
-            <input type="text" id="inMaterial" placeholder="Material Name" class="w-full border p-2 rounded text-xs">
-            <input type="text" id="inQty" placeholder="Quantity" class="w-full border p-2 rounded text-xs">
-            <input type="text" id="inVehicle" placeholder="Vehicle Number" class="w-full border p-2 rounded text-xs">
-            <div class="flex justify-end space-x-2 pt-2">
-                <button onclick="closeInwardModal()" class="px-3 py-1 text-xs border rounded">Cancel</button>
-                <button onclick="addInward()" class="px-3 py-1 text-xs bg-indigo-600 text-white rounded">Save Log</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Vendor Modal -->
-    <div id="vendorModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 p-4">
-        <div class="bg-white p-6 rounded-xl w-full max-w-md space-y-3">
-            <h3 class="text-md font-bold">Add Vendor</h3>
-            <input type="text" id="vFirm" placeholder="Vendor / Firm Name" class="w-full border p-2 rounded text-xs">
-            <input type="text" id="vMaterial" placeholder="Supplied Material" class="w-full border p-2 rounded text-xs">
-            <input type="text" id="vLoc" placeholder="Location / Address" class="w-full border p-2 rounded text-xs">
-            <input type="text" id="vPerson" placeholder="Contact Person Name" class="w-full border p-2 rounded text-xs">
-            <input type="text" id="vPhone" placeholder="Phone Number" class="w-full border p-2 rounded text-xs">
-            <div class="flex justify-end space-x-2 pt-2">
-                <button onclick="closeVendorModal()" class="px-3 py-1 text-xs border rounded">Cancel</button>
-                <button onclick="addVendor()" class="px-3 py-1 text-xs bg-slate-800 text-white rounded">Save Vendor</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Contacts Modal -->
-    <div id="contactsModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 p-4">
-        <div class="bg-white p-6 rounded-xl w-full max-w-md space-y-3">
-            <h3 class="text-md font-bold border-b pb-2">Management Head Contacts</h3>
-            <div id="contactsList" class="space-y-2 text-xs"></div>
-            <div class="border-t pt-2 space-y-2">
-                <input type="text" id="newContactTitle" placeholder="Role (e.g. Plant Head)" class="w-full border p-1.5 rounded text-xs">
-                <input type="text" id="newContactPhone" placeholder="Phone Number" class="w-full border p-1.5 rounded text-xs">
-                <button onclick="addContact()" class="w-full bg-slate-800 text-white py-1 rounded text-xs">+ Add Contact</button>
-            </div>
-            <div class="flex justify-end pt-2">
-                <button onclick="closeContactsModal()" class="px-3 py-1 text-xs border rounded">Close</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Security Credentials Modal -->
-    <div id="securityModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 p-4">
-        <div class="bg-white p-6 rounded-xl w-full max-w-md space-y-3">
-            <h3 class="text-md font-bold border-b pb-2">Change Login Credentials</h3>
-            <input type="text" id="newUsername" placeholder="New Username" class="w-full border p-2 rounded text-xs">
-            <input type="password" id="newPassword" placeholder="New Password" class="w-full border p-2 rounded text-xs">
-            <div class="flex justify-end space-x-2 pt-2">
-                <button onclick="closeSecurityModal()" class="px-3 py-1 text-xs border rounded">Cancel</button>
-                <button onclick="saveCredentials()" class="px-3 py-1 text-xs bg-green-600 text-white rounded">Save Credentials</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- ================= 3. JAVASCRIPT APPLICATION LOGIC ================= -->
+    <!-- JAVASCRIPT CODE -->
     <script>
-        // Credentials Setup
-        let masterUser = localStorage.getItem('masterUser') || "admin";
-        let masterPass = localStorage.getItem('masterPass') || "bigvolt123";
+        const companyDetails = {
+            c1: {
+                name: "Bigvolt Transformers and Switchgear Pvt Ltd",
+                address: "H1 - 702 RIICO Industrial area, Khushkhera, Alwar, Rajasthan, 301707",
+                gst: "08AAKCB0266E1ZV",
+                contact: "7988340039, 7607070994",
+                email: "infobvts@gmail.com"
+            },
+            c2: {
+                name: "Innovivo Fabtech Pvt Ltd",
+                address: "G1-845 RIICO Industrial area, Khushkhera, Alwar, Rajasthan, 301707",
+                gst: "08AAICI4283L1Z2",
+                contact: "7988340039, 7607070994",
+                email: "N/A"
+            },
+            c3: {
+                name: "AR Rehyan International",
+                address: "Plot no G1-844 RIICO Industrial area, Khushkhera, Alwar, Rajasthan, 301707",
+                gst: "08APLPK2706D1Z4",
+                contact: "7988340039, 7607070994",
+                email: "N/A"
+            }
+        };
 
-        function checkLogin() {
-            let u = document.getElementById('loginUser').value;
-            let p = document.getElementById('loginPass').value;
-            if(u === masterUser && p === masterPass) {
-                document.getElementById('loginScreen').classList.add('hidden');
-                document.getElementById('mainApp').classList.remove('hidden');
+        let currentCompKey = null;
+        let employees = JSON.parse(localStorage.getItem('erp_employees')) || [];
+        let invoiceCounter = parseInt(localStorage.getItem('erp_inv_count')) || 1;
+
+        function selectCompany(key) {
+            currentCompKey = key;
+            const comp = companyDetails[key];
+            document.getElementById('companySelectScreen').classList.add('hidden');
+            document.getElementById('mainPortal').classList.remove('hidden');
+            document.getElementById('currentCompanyHeader').innerText = comp.name;
+            document.getElementById('currentCompanySubHeader').innerText = `GST: ${comp.gst} | Khushkhera`;
+            
+            renderEmployees();
+            renderAttendanceGrid();
+            renderMasterRoll();
+            updateDashboard();
+        }
+
+        function switchCompanyScreen() {
+            document.getElementById('mainPortal').classList.add('hidden');
+            document.getElementById('companySelectScreen').classList.remove('hidden');
+        }
+
+        function switchTab(tabId) {
+            ['dashboard', 'employees', 'attendance', 'hr', 'accounts'].forEach(id => {
+                document.getElementById(`section-${id}`).classList.add('hidden');
+                document.getElementById(`tab-${id}`).classList.remove('active-tab');
+            });
+            document.getElementById(`section-${tabId}`).classList.remove('hidden');
+            document.getElementById(`tab-${tabId}`).classList.add('active-tab');
+        }
+
+        function addEmployee(e) {
+            e.preventDefault();
+            const fileInput = document.getElementById('empPhoto');
+            let photoUrl = 'https://via.placeholder.com/40';
+
+            const save = (imgData) => {
+                const newEmp = {
+                    id: Date.now(),
+                    companyKey: currentCompKey,
+                    name: document.getElementById('empName').value,
+                    father: document.getElementById('empFather').value,
+                    doj: document.getElementById('empDOJ').value,
+                    role: document.getElementById('empRole').value,
+                    salary: parseFloat(document.getElementById('empSalary').value),
+                    esic: document.getElementById('empESIC').value,
+                    photo: imgData
+                };
+                employees.push(newEmp);
+                localStorage.setItem('erp_employees', JSON.stringify(employees));
+                document.getElementById('empForm').reset();
+                renderEmployees();
+                renderAttendanceGrid();
+                renderMasterRoll();
+                updateDashboard();
+            };
+
+            if (fileInput.files && fileInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = (e) => save(e.target.result);
+                reader.readAsDataURL(fileInput.files[0]);
             } else {
-                document.getElementById('loginError').classList.remove('hidden');
+                save(photoUrl);
             }
         }
 
-        function logout() {
-            document.getElementById('mainApp').classList.add('hidden');
-            document.getElementById('loginScreen').classList.remove('hidden');
-        }
+        function renderEmployees() {
+            const tbody = document.getElementById('empTableBody');
+            tbody.innerHTML = '';
+            const filtered = employees.filter(e => e.companyKey === currentCompKey);
 
-        // Navigation Switchers
-        function showTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active-tab'));
-            document.getElementById('tab-' + tabId).classList.remove('hidden');
-            document.getElementById('btn-' + tabId).classList.add('active-tab');
-        }
-
-        function showSubHr(subId) {
-            document.querySelectorAll('.subhr-content').forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll('.subhr-btn').forEach(el => el.classList.remove('active-subtab'));
-            document.getElementById('subhr-' + subId).classList.remove('hidden');
-            document.getElementById('subhr-btn-' + subId).classList.add('active-subtab');
-        }
-
-        function showSubAcc(subId) {
-            document.querySelectorAll('.subacc-content').forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll('.subacc-btn').forEach(el => el.classList.remove('active-subtab'));
-            document.getElementById('subacc-' + subId).classList.remove('hidden');
-            document.getElementById('subacc-btn-' + subId).classList.add('active-subtab');
-        }
-
-        function showSubStore(subId) {
-            document.querySelectorAll('.substore-content').forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll('.substore-btn').forEach(el => el.classList.remove('active-subtab'));
-            document.getElementById('substore-' + subId).classList.remove('hidden');
-            document.getElementById('substore-btn-' + subId).classList.add('active-subtab');
-        }
-
-        // Data Models
-        let employees = JSON.parse(localStorage.getItem('employees')) || [
-            { id: 1, name: "Ramesh Sharma", unit: "Bigvolt", designation: "Winding Master", phone: "9876543210", rate: 700, kycDone: true, advance: 1000 },
-            { id: 2, name: "Suresh Kumar", unit: "Innovivo", designation: "Senior Welder", phone: "9876543211", rate: 650, kycDone: false, advance: 500 }
-        ];
-
-        let expenses = JSON.parse(localStorage.getItem('expenses')) || [
-            { date: "2026-10-06", unit: "Bigvolt", detail: "Factory Refreshments", paidTo: "Local Vendor", amount: 250 }
-        ];
-
-        let invoices = JSON.parse(localStorage.getItem('invoices')) || [
-            { type: "Purchase", invNo: "INV-2026-01", date: "2026-10-05", party: "Arihant Steel", item: "MS Steel Sheets", amt: 45000, status: "Payment Done" }
-        ];
-
-        let items = JSON.parse(localStorage.getItem('items')) || [
-            { name: "CRGO Core Sheet (mm)", unit: "AR_Rehyan", stock: 120, min: 200 }
-        ];
-
-        let inwardLogs = JSON.parse(localStorage.getItem('inwardLogs')) || [
-            { date: "2026-10-06", inv: "INV-8891", vendor: "Tata Steel", material: "CRGO Coil", qty: "5.2 Tons", vehicle: "RJ-02-GB-1234" }
-        ];
-
-        let vendors = JSON.parse(localStorage.getItem('vendors')) || [
-            { firm: "Tata Steel Ltd", material: "CRGO Coils", location: "Bhiwadi", person: "Rajesh Ji", phone: "9829012345" }
-        ];
-
-        let contacts = JSON.parse(localStorage.getItem('contacts')) || [
-            { title: "Plant Owner", phone: "+91 9876543210" }
-        ];
-
-        function saveAllData() {
-            localStorage.setItem('employees', JSON.stringify(employees));
-            localStorage.setItem('expenses', JSON.stringify(expenses));
-            localStorage.setItem('invoices', JSON.stringify(invoices));
-            localStorage.setItem('items', JSON.stringify(items));
-            localStorage.setItem('inwardLogs', JSON.stringify(inwardLogs));
-            localStorage.setItem('vendors', JSON.stringify(vendors));
-            localStorage.setItem('contacts', JSON.stringify(contacts));
-            renderAll();
-        }
-
-        function renderAll() {
-            let uFilter = document.getElementById('unitFilter').value;
-            let filteredEmp = uFilter === 'All' ? employees : employees.filter(e => e.unit === uFilter);
-
-            // Render Employees & KYC
-            let empHtml = '';
-            let kycHtml = '';
-            let attHtml = '';
-            let payrollHtml = '';
-
-            filteredEmp.forEach(e => {
-                empHtml += `<tr class="border-b">
-                    <td class="p-3 font-semibold">${e.name}</td>
-                    <td class="p-3">${e.unit}</td>
-                    <td class="p-3">${e.designation}</td>
-                    <td class="p-3">${e.phone}</td>
-                    <td class="p-3">₹${e.rate}</td>
-                    <td class="p-3"><button onclick="deleteEmp(${e.id})" class="text-red-600 text-xs">Delete</button></td>
-                </tr>`;
-
-                kycHtml += `<tr class="border-b">
-                    <td class="p-3 font-semibold">${e.name}</td>
-                    <td class="p-3">${e.unit}</td>
-                    <td class="p-3">${e.kycDone ? '<span class="bg-green-100 text-green-700 font-bold px-2 py-0.5 rounded">Verified & ESIC Done</span>' : '<span class="bg-amber-100 text-amber-700 font-bold px-2 py-0.5 rounded">Pending Verification</span>'}</td>
-                    <td class="p-3"><button onclick="toggleKyc(${e.id})" class="text-xs bg-slate-800 text-white px-2 py-1 rounded">Mark Verified & Done</button></td>
-                </tr>`;
-
-                attHtml += `<tr class="border-b">
-                    <td class="p-3 font-semibold">${e.name}</td>
-                    <td class="p-3">${e.unit}</td>
-                    <td class="p-3"><select class="border p-1 rounded text-xs"><option>Present (P)</option><option>Absent (A)</option></select></td>
-                    <td class="p-3"><input type="number" value="0" class="border p-1 rounded w-16 text-xs"></td>
-                </tr>`;
-
-                let basePay = e.rate * 26;
-                let netPay = basePay - (e.advance || 0);
-                payrollHtml += `<tr class="border-b">
-                    <td class="p-3 font-semibold">${e.name}</td>
-                    <td class="p-3">₹${e.rate}</td>
-                    <td class="p-3">26</td>
-                    <td class="p-3">₹${basePay}</td>
-                    <td class="p-3 text-red-600">₹${e.advance || 0}</td>
-                    <td class="p-3 font-bold text-green-700">₹${netPay}</td>
-                    <td class="p-3"><button onclick="addAdvancePrompt(${e.id})" class="text-xs bg-red-100 text-red-700 px-2 py-1 rounded">+ Advance</button></td>
-                </tr>`;
+            filtered.forEach(e => {
+                tbody.innerHTML += `
+                    <tr class="border-b hover:bg-gray-50">
+                        <td class="p-3"><img src="${e.photo}" class="w-10 h-10 rounded-full object-cover border"></td>
+                        <td class="p-3 font-bold">${e.name}</td>
+                        <td class="p-3 text-gray-600">${e.father}</td>
+                        <td class="p-3 text-gray-600">${e.doj}</td>
+                        <td class="p-3">${e.role}</td>
+                        <td class="p-3 font-bold text-emerald-600">₹${e.salary}</td>
+                        <td class="p-3">${e.esic}</td>
+                    </tr>
+                `;
             });
-            document.getElementById('empTableBody').innerHTML = empHtml;
-            document.getElementById('kycTableBody').innerHTML = kycHtml;
-            document.getElementById('attTableBody').innerHTML = attHtml;
-            document.getElementById('payrollTableBody').innerHTML = payrollHtml;
-
-            // Render Expenses
-            let expHtml = '';
-            let todayExpenseTotal = 0;
-            expenses.forEach(ex => {
-                expHtml += `<tr class="border-b"><td class="p-3">${ex.date}</td><td class="p-3">${ex.unit}</td><td class="p-3">${ex.detail}</td><td class="p-3">${ex.paidTo}</td><td class="p-3 font-bold text-red-600">₹${ex.amount}</td></tr>`;
-                todayExpenseTotal += Number(ex.amount);
-            });
-            document.getElementById('expenseTableBody').innerHTML = expHtml;
-
-            // Render Invoices
-            let invHtml = '';
-            invoices.forEach((i, idx) => {
-                let isDone = i.status === "Payment Done";
-                invHtml += `<tr class="border-b">
-                    <td class="p-2 border font-bold">${i.type}</td>
-                    <td class="p-2 border">${i.invNo}</td>
-                    <td class="p-2 border">${i.date}</td>
-                    <td class="p-2 border">${i.party}</td>
-                    <td class="p-2 border">${i.item}</td>
-                    <td class="p-2 border font-bold">₹${i.amt}</td>
-                    <td class="p-2 border"><span class="${isDone ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'} font-bold px-2 py-0.5 rounded text-xs">${i.status}</span></td>
-                    <td class="p-2 border"><button onclick="togglePayment(${idx})" class="text-xs bg-gray-200 px-2 py-1 rounded">Toggle Status</button></td>
-                </tr>`;
-            });
-            document.getElementById('invoiceTableBody').innerHTML = invHtml;
-
-            // Render Store Items
-            let storeHtml = '';
-            let lowStockCount = 0;
-            items.forEach(i => {
-                let isLow = i.stock < i.min;
-                if(isLow) lowStockCount++;
-                storeHtml += `<tr class="border-b"><td class="p-3 font-semibold">${i.name}</td><td class="p-3">${i.unit}</td><td class="p-3 font-bold ${isLow ? 'text-red-600' : 'text-green-600'}">${i.stock}</td><td class="p-3">${i.min}</td><td class="p-3">${isLow ? '<span class="bg-red-100 text-red-700 font-bold px-2 py-0.5 rounded">Low Alert</span>' : '<span class="bg-green-100 text-green-700 font-bold px-2 py-0.5 rounded">Sufficient</span>'}</td><td class="p-3"><button onclick="updateStockPrompt('${i.name}')" class="text-xs border px-2 py-1 rounded">Edit</button></td></tr>`;
-            });
-            document.getElementById('inventoryTableBody').innerHTML = storeHtml;
-
-            // Render Inward
-            let inwardHtml = '';
-            inwardLogs.forEach(i => {
-                inwardHtml += `<tr class="border-b"><td class="p-2 border">${i.date}</td><td class="p-2 border font-bold">${i.inv}</td><td class="p-2 border">${i.vendor}</td><td class="p-2 border">${i.material}</td><td class="p-2 border font-semibold">${i.qty}</td><td class="p-2 border">${i.vehicle}</td></tr>`;
-            });
-            document.getElementById('inwardTableBody').innerHTML = inwardHtml;
-
-            // Render Vendors
-            let vHtml = '';
-            vendors.forEach(v => {
-                vHtml += `<tr class="border-b"><td class="p-3 font-bold">${v.firm}</td><td class="p-3">${v.material}</td><td class="p-3">${v.location || '-'}</td><td class="p-3">${v.person}</td><td class="p-3">${v.phone}</td></tr>`;
-            });
-            document.getElementById('vendorTableBody').innerHTML = vHtml;
-
-            // Dashboard Numbers
-            document.getElementById('dash-total-emp').innerText = employees.length;
-            document.getElementById('dash-present-emp').innerText = employees.length;
-            document.getElementById('dash-today-expense').innerText = "₹ " + todayExpenseTotal;
-            document.getElementById('dash-low-stock').innerText = lowStockCount;
-
-            document.getElementById('bg-emp-count').innerText = employees.filter(e => e.unit === 'Bigvolt').length + " Workers";
-            document.getElementById('in-emp-count').innerText = employees.filter(e => e.unit === 'Innovivo').length + " Workers";
-            document.getElementById('ar-emp-count').innerText = employees.filter(e => e.unit === 'AR_Rehyan').length + " Workers";
-
-            calcContractorBill();
         }
 
-        // Contractor Bill Calculations
-        function calcContractorBill() {
-            let name = document.getElementById('conName').value;
-            let job = document.getElementById('conJob').value;
-            let qty = Number(document.getElementById('conQty').value) || 0;
-            let rate = Number(document.getElementById('conRate').value) || 0;
-            let adv = Number(document.getElementById('conAdv').value) || 0;
-            let food = Number(document.getElementById('conFood').value) || 0;
-
-            let gross = qty * rate;
-            let tds = gross * 0.01;
-            let net = gross - adv - food - tds;
-
-            document.getElementById('lblConName').innerText = name;
-            document.getElementById('lblConJob').innerText = job;
-            document.getElementById('lblGross').innerText = "₹ " + gross;
-            document.getElementById('lblAdv').innerText = "- ₹ " + adv;
-            document.getElementById('lblFood').innerText = "- ₹ " + food;
-            document.getElementById('lblTds').innerText = "- ₹ " + tds;
-            document.getElementById('lblNetPay').innerText = "₹ " + net;
-        }
-
-        // Modals & Handlers
-        function openEmpModal() { document.getElementById('empModal').classList.remove('hidden'); }
-        function closeEmpModal() { document.getElementById('empModal').classList.add('hidden'); }
-        function addEmployee() {
-            let name = document.getElementById('empName').value;
-            let unit = document.getElementById('empUnit').value;
-            let designation = document.getElementById('empDesig').value;
-            let phone = document.getElementById('empPhone').value;
-            let rate = Number(document.getElementById('empRate').value);
-            if(name) {
-                employees.push({ id: Date.now(), name, unit, designation, phone, rate, kycDone: false, advance: 0 });
-                saveAllData();
-                closeEmpModal();
+        function renderAttendanceGrid() {
+            const header = document.getElementById('attHeader');
+            const tbody = document.getElementById('attTableBody');
+            header.innerHTML = '<th class="p-2 border">Emp Name</th><th class="p-2 border">In / Out Time</th>';
+            
+            for(let i=1; i<=30; i++) {
+                header.innerHTML += `<th class="p-1 border text-xs">${i}</th>`;
             }
-        }
-        function deleteEmp(id) { employees = employees.filter(e => e.id !== id); saveAllData(); }
-        function toggleKyc(id) {
-            let emp = employees.find(e => e.id === id);
-            if(emp) { emp.kycDone = !emp.kycDone; saveAllData(); }
-        }
 
-        function openExpenseModal() { document.getElementById('expenseModal').classList.remove('hidden'); }
-        function closeExpenseModal() { document.getElementById('expenseModal').classList.add('hidden'); }
-        function addExpense() {
-            let date = document.getElementById('expDate').value || new Date().toISOString().split('T')[0];
-            let unit = document.getElementById('expUnit').value;
-            let detail = document.getElementById('expDetail').value;
-            let paidTo = document.getElementById('expPaidTo').value;
-            let amount = document.getElementById('expAmount').value;
-            if(detail && amount) { expenses.push({ date, unit, detail, paidTo, amount }); saveAllData(); closeExpenseModal(); }
-        }
+            tbody.innerHTML = '';
+            const filtered = employees.filter(e => e.companyKey === currentCompKey);
 
-        function openInvoiceModal() { document.getElementById('invoiceModal').classList.remove('hidden'); }
-        function closeInvoiceModal() { document.getElementById('invoiceModal').classList.add('hidden'); }
-        function addInvoice() {
-            let type = document.getElementById('invType').value;
-            let invNo = document.getElementById('invNo').value;
-            let date = document.getElementById('invDate').value || new Date().toISOString().split('T')[0];
-            let party = document.getElementById('invParty').value;
-            let item = document.getElementById('invItem').value;
-            let amt = Number(document.getElementById('invAmt').value);
-            let status = document.getElementById('invStatus').value;
-            if(invNo && party) { invoices.push({ type, invNo, date, party, item, amt, status }); saveAllData(); closeInvoiceModal(); }
-        }
-        function togglePayment(idx) {
-            invoices[idx].status = invoices[idx].status === "Payment Done" ? "Payment Pending" : "Payment Done";
-            saveAllData();
-        }
+            filtered.forEach(e => {
+                let daysHtml = '';
+                for(let i=1; i<=30; i++) {
+                    daysHtml += `<td class="border p-1"><input type="checkbox" checked class="w-4 h-4 text-blue-600"></td>`;
+                }
 
-        function openItemModal() { document.getElementById('itemModal').classList.remove('hidden'); }
-        function closeItemModal() { document.getElementById('itemModal').classList.add('hidden'); }
-        function addItem() {
-            let name = document.getElementById('itemName').value;
-            let unit = document.getElementById('itemUnit').value;
-            let stock = Number(document.getElementById('itemStock').value);
-            let min = Number(document.getElementById('itemMin').value);
-            if(name) { items.push({ name, unit, stock, min }); saveAllData(); closeItemModal(); }
-        }
-        function updateStockPrompt(itemName) {
-            let newQty = prompt("Enter new current stock quantity for " + itemName + ":");
-            if(newQty !== null) {
-                let item = items.find(i => i.name === itemName);
-                if(item) { item.stock = Number(newQty); saveAllData(); }
-            }
-        }
-
-        function openInwardModal() { document.getElementById('inwardModal').classList.remove('hidden'); }
-        function closeInwardModal() { document.getElementById('inwardModal').classList.add('hidden'); }
-        function addInward() {
-            let date = document.getElementById('inDate').value || new Date().toISOString().split('T')[0];
-            let inv = document.getElementById('inInvoice').value;
-            let vendor = document.getElementById('inVendor').value;
-            let material = document.getElementById('inMaterial').value;
-            let qty = document.getElementById('inQty').value;
-            let vehicle = document.getElementById('inVehicle').value;
-            if(inv && vendor) { inwardLogs.push({ date, inv, vendor, material, qty, vehicle }); saveAllData(); closeInwardModal(); }
-        }
-
-        function openVendorModal() { document.getElementById('vendorModal').classList.remove('hidden'); }
-        function closeVendorModal() { document.getElementById('vendorModal').classList.add('hidden'); }
-        function addVendor() {
-            let firm = document.getElementById('vFirm').value;
-            let material = document.getElementById('vMaterial').value;
-            let location = document.getElementById('vLoc').value;
-            let person = document.getElementById('vPerson').value;
-            let phone = document.getElementById('vPhone').value;
-            if(firm) { vendors.push({ firm, material, location, person, phone }); saveAllData(); closeVendorModal(); }
-        }
-
-        function addAdvancePrompt(empId) {
-            let emp = employees.find(e => e.id === empId);
-            let amt = prompt("Enter Advance Amount given to " + emp.name + " (₹):");
-            if(amt !== null) { emp.advance = Number(amt); saveAllData(); }
-        }
-
-        function openContactsModal() { renderContacts(); document.getElementById('contactsModal').classList.remove('hidden'); }
-        function closeContactsModal() { document.getElementById('contactsModal').classList.add('hidden'); }
-        function renderContacts() {
-            let html = '';
-            contacts.forEach((c, idx) => {
-                html += `<div class="flex justify-between items-center bg-gray-50 p-2 rounded border"><div><strong>${c.title}:</strong> ${c.phone}</div><button onclick="removeContact(${idx})" class="text-red-500">Remove</button></div>`;
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="border p-2 font-bold text-left">${e.name}</td>
+                        <td class="border p-1 text-xs">
+                            <input type="time" value="09:00" class="border text-[10px]">
+                            <input type="time" value="18:00" class="border text-[10px] mt-1">
+                        </td>
+                        ${daysHtml}
+                    </tr>
+                `;
             });
-            document.getElementById('contactsList').innerHTML = html;
-        }
-        function addContact() {
-            let title = document.getElementById('newContactTitle').value;
-            let phone = document.getElementById('newContactPhone').value;
-            if(title && phone) { contacts.push({ title, phone }); saveAllData(); renderContacts(); }
-        }
-        function removeContact(idx) { contacts.splice(idx, 1); saveAllData(); renderContacts(); }
-
-        function openSecurityModal() { document.getElementById('securityModal').classList.remove('hidden'); }
-        function closeSecurityModal() { document.getElementById('securityModal').classList.add('hidden'); }
-        function saveCredentials() {
-            let u = document.getElementById('newUsername').value;
-            let p = document.getElementById('newPassword').value;
-            if(u && p) {
-                masterUser = u; masterPass = p;
-                localStorage.setItem('masterUser', u); localStorage.setItem('masterPass', p);
-                alert("Credentials Updated!"); closeSecurityModal();
-            }
         }
 
-        function switchUnit() { renderAll(); }
-        function saveAttendance() { alert("Attendance Log Saved!"); }
+        function renderMasterRoll() {
+            const tbody = document.getElementById('masterRollBody');
+            tbody.innerHTML = '';
 
-        function exportCSV(type) {
-            let csvContent = "data:text/csv;charset=utf-8,Name,Daily Rate,Advance,Net Pay\n";
-            employees.forEach(e => {
-                let net = (e.rate * 26) - (e.advance || 0);
-                csvContent += `${e.name},${e.rate},${e.advance || 0},${net}\n`;
+            employees.forEach((e, index) => {
+                const gross = e.salary;
+                const esicDed = e.esic === 'Yes' ? (gross * 0.0075).toFixed(2) : 0;
+                const net = (gross - esicDed).toFixed(2);
+
+                tbody.innerHTML += `
+                    <tr class="border-b">
+                        <td class="p-2 border">EMP-${index+101}</td>
+                        <td class="p-2 border font-bold">${e.name}</td>
+                        <td class="p-2 border text-xs text-blue-800">${companyDetails[e.companyKey].name}</td>
+                        <td class="p-2 border">₹${e.salary}</td>
+                        <td class="p-2 border">30</td>
+                        <td class="p-2 border font-bold text-gray-800">₹${gross}</td>
+                        <td class="p-2 border text-red-600">₹${esicDed}</td>
+                        <td class="p-2 border font-bold text-emerald-700">₹${net}</td>
+                    </tr>
+                `;
             });
-            let encodedUri = encodeURI(csvContent);
-            let link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
-            link.setAttribute("download", "Payroll_Report.csv");
-            document.body.appendChild(link);
-            link.click();
         }
 
-        window.onload = renderAll;
+        function generateInvoice(e) {
+            e.preventDefault();
+            const comp = companyDetails[currentCompKey];
+            
+            document.getElementById('invCompName').innerText = comp.name;
+            document.getElementById('invCompAddr').innerText = comp.address;
+            document.getElementById('invCompGST').innerText = 'GSTIN: ' + comp.gst;
+            document.getElementById('invCompContact').innerText = 'Contact: ' + comp.contact + (comp.email !== 'N/A' ? ' | Mail: ' + comp.email : '');
+            
+            document.getElementById('invNum').innerText = `INV-00${invoiceCounter}`;
+            document.getElementById('invDispContractor').innerText = document.getElementById('invContractor').value;
+            document.getElementById('invDispWork').innerText = document.getElementById('invWork').value;
+            document.getElementById('invDispAmount').innerText = '₹' + parseFloat(document.getElementById('invAmount').value).toFixed(2);
+
+            document.getElementById('invoiceTemplate').classList.remove('hidden');
+            invoiceCounter++;
+            localStorage.setItem('erp_inv_count', invoiceCounter);
+        }
+
+        function updateDashboard() {
+            const filtered = employees.filter(e => e.companyKey === currentCompKey);
+            document.getElementById('dashTotalEmp').innerText = filtered.length;
+            document.getElementById('dashPresent').innerText = filtered.length;
+            document.getElementById('dashInvoices').innerText = invoiceCounter - 1;
+            
+            const total = filtered.reduce((acc, curr) => acc + curr.salary, 0);
+            document.getElementById('dashPayout').innerText = '₹' + total;
+        }
     </script>
 </body>
 </html>
