@@ -1,1115 +1,893 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enterprise ERP Portal - Bigvolt Group</title>
+    <title>Enterprise ERP - Bigvolt | Innovivo | AR Rehyan</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Lucide Icons -->
+    <!-- Lucide Icons CDN -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- html2pdf for PDF Generation -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
-        .custom-scrollbar::-webkit-scrollbar { height: 6px; width: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .watermark {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-30deg);
+            font-size: 5rem;
+            font-weight: 900;
+            color: rgba(15, 23, 42, 0.03);
+            pointer-events: none;
+            z-index: 0;
+            white-space: nowrap;
+            user-select: none;
+        }
         @media print {
             .no-print { display: none !important; }
             .print-only { display: block !important; }
+            body { background: white; color: black; }
         }
     </style>
 </head>
-<body class="bg-slate-100 text-slate-800 antialiased min-h-screen">
+<body class="bg-slate-900 text-slate-100 min-h-screen font-sans relative antialiased">
 
-    <!-- LOGIN / COMPANY SELECTION OVERLAY -->
-    <div id="loginModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/90 backdrop-blur-md p-4">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full p-8 overflow-hidden relative">
-            <div class="text-center mb-8">
-                <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Industrial Operations Portal</h1>
-                <p class="text-slate-500 mt-2">Kripya Login karein aur apni Company chunein</p>
-            </div>
+    <!-- Dynamic Watermark -->
+    <div id="appWatermark" class="watermark">BIGVOLT TRANSFORMERS</div>
 
-            <!-- Login Form -->
-            <div id="loginStep" class="max-w-md mx-auto space-y-4">
-                <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-1">Username</label>
-                    <input type="text" id="usernameInput" value="admin" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none">
-                </div>
-                <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-1">Password</label>
-                    <input type="password" id="passwordInput" value="admin123" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none">
-                </div>
-                <button onclick="proceedToCompanySelect()" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow-lg hover:shadow-blue-500/30 transition">Login System</button>
-            </div>
-
-            <!-- Company Select Step (Hidden Initially) -->
-            <div id="companyStep" class="hidden space-y-6">
-                <h2 class="text-xl font-bold text-slate-800 text-center">Select Operating Company</h2>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <!-- Company 1 -->
-                    <div onclick="selectCompany('bvts')" class="border-2 border-slate-200 hover:border-blue-600 rounded-xl p-5 cursor-pointer hover:shadow-xl transition bg-slate-50 hover:bg-blue-50/50 group">
-                        <div class="w-12 h-12 bg-blue-600 text-white rounded-lg flex items-center justify-center mb-3 font-bold text-xl group-hover:scale-110 transition">BV</div>
-                        <h3 class="font-bold text-slate-900 text-sm leading-snug">Bigvolt Transformers & Switchgear Pvt Ltd</h3>
-                        <p class="text-xs text-slate-500 mt-2">Specialization: Transformer Manufacturing</p>
-                        <span class="inline-block mt-3 text-xs bg-blue-100 text-blue-700 font-semibold px-2.5 py-1 rounded">GST: 08AAKCB0266E1ZV</span>
-                    </div>
-
-                    <!-- Company 2 -->
-                    <div onclick="selectCompany('innovivo')" class="border-2 border-slate-200 hover:border-indigo-600 rounded-xl p-5 cursor-pointer hover:shadow-xl transition bg-slate-50 hover:bg-indigo-50/50 group">
-                        <div class="w-12 h-12 bg-indigo-600 text-white rounded-lg flex items-center justify-center mb-3 font-bold text-xl group-hover:scale-110 transition">IF</div>
-                        <h3 class="font-bold text-slate-900 text-sm leading-snug">Innovivo Fabtech Pvt Ltd</h3>
-                        <p class="text-xs text-slate-500 mt-2">Specialization: Transformer Tanks Manufacturing</p>
-                        <span class="inline-block mt-3 text-xs bg-indigo-100 text-indigo-700 font-semibold px-2.5 py-1 rounded">GST: 08AAICI4283L1Z2</span>
-                    </div>
-
-                    <!-- Company 3 -->
-                    <div onclick="selectCompany('rehyan')" class="border-2 border-slate-200 hover:border-amber-600 rounded-xl p-5 cursor-pointer hover:shadow-xl transition bg-slate-50 hover:bg-amber-50/50 group">
-                        <div class="w-12 h-12 bg-amber-600 text-white rounded-lg flex items-center justify-center mb-3 font-bold text-xl group-hover:scale-110 transition">AR</div>
-                        <h3 class="font-bold text-slate-900 text-sm leading-snug">AR Rehyan International</h3>
-                        <p class="text-xs text-slate-500 mt-2">Specialization: Core Cutting Unit</p>
-                        <span class="inline-block mt-3 text-xs bg-amber-100 text-amber-700 font-semibold px-2.5 py-1 rounded">GST: 08APLPK2706D1Z4</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- MAIN INTERFACE (Hidden before login) -->
-    <div id="mainApp" class="hidden flex flex-col min-h-screen">
-
-        <!-- Top Navigation Bar -->
-        <header class="bg-slate-900 text-white shadow-md sticky top-0 z-40">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex items-center justify-between h-16">
-                    <div class="flex items-center space-x-3">
-                        <div id="appLogoBadge" class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center font-bold text-xl">BV</div>
-                        <div>
-                            <h1 id="selectedCompanyName" class="font-bold text-base leading-none">Bigvolt Transformers & Switchgear Pvt Ltd</h1>
-                            <p id="selectedCompanySub" class="text-xs text-slate-400 mt-1">Khushkhera, Alwar, Rajasthan</p>
-                        </div>
-                    </div>
-
-                    <!-- Company Switcher & User Profile -->
-                    <div class="flex items-center space-x-4">
-                        <button onclick="switchCompanyModal()" class="text-xs bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 px-3 py-1.5 rounded-lg flex items-center gap-2 transition">
-                            <i data-lucide="building-2" class="w-4 h-4 text-blue-400"></i> Switch Unit
-                        </button>
-                        <div class="border-l border-slate-700 h-6"></div>
-                        <div class="flex items-center gap-2">
-                            <div class="w-8 h-8 bg-slate-700 rounded-full flex items-center justify-center font-semibold text-xs text-blue-300">AD</div>
-                            <span class="text-xs font-medium text-slate-300">Admin User</span>
-                        </div>
-                        <button onclick="logout()" class="text-slate-400 hover:text-red-400 p-1"><i data-lucide="log-out" class="w-5 h-5"></i></button>
-                    </div>
-                </div>
-            </div>
-        </header>
-
-        <!-- WELCOME PRESENTATION BANNER -->
-        <div id="presentationBanner" class="bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 text-white py-6 px-8 shadow-inner relative overflow-hidden">
-            <div class="max-w-7xl mx-auto flex items-center justify-between relative z-10">
-                <div>
-                    <span class="inline-block bg-blue-500/20 text-blue-300 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider mb-2 border border-blue-400/30">Active Operations Dashboard</span>
-                    <h2 id="welcomeHeading" class="text-2xl font-black tracking-wide">Welcome to Bigvolt Transformers & Switchgear Pvt Ltd</h2>
-                    <p id="welcomeDescription" class="text-sm text-slate-300 mt-1">Leading Manufacturer of High Grade Electrical Transformers & Power Equipment</p>
-                </div>
-                <div class="hidden md:flex gap-6 text-right">
-                    <div class="bg-white/10 backdrop-blur border border-white/10 p-3 rounded-xl">
-                        <p class="text-xs text-slate-300">GSTIN Registration</p>
-                        <p id="companyGstBadge" class="font-mono text-sm font-bold text-amber-400">08AAKCB0266E1ZV</p>
-                    </div>
-                    <div class="bg-white/10 backdrop-blur border border-white/10 p-3 rounded-xl">
-                        <p class="text-xs text-slate-300">Head Contact</p>
-                        <p class="font-mono text-sm font-bold text-emerald-400">+91 7988340039</p>
-                    </div>
-                </div>
-            </div>
-            <!-- Decorative Background Graphic -->
-            <div class="absolute -right-10 -bottom-10 w-60 h-60 bg-blue-500/10 rounded-full blur-2xl"></div>
+    <!-- Top Navigation Bar -->
+    <header class="no-print sticky top-0 z-40 bg-slate-800/90 backdrop-blur border-b border-slate-700 px-4 py-3 flex items-center justify-between shadow-lg">
+        <div class="flex items-center space-x-3">
+            <button onclick="switchCompanyModal()" class="flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-lg text-sm font-semibold transition shadow">
+                <i data-lucide="building-2" class="w-4 h-4"></i>
+                <span id="activeCompanyBadge">Bigvolt Transformers</span>
+                <i data-lucide="chevron-down" class="w-4 h-4"></i>
+            </button>
+            <span class="text-xs text-slate-400 hidden md:inline">| GST: <span id="activeGstBadge">08AAKCB0266E1ZV</span></span>
         </div>
 
-        <!-- MAIN LAYOUT (Sidebar + Content) -->
-        <div class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 flex gap-6">
-
-            <!-- Sidebar Navigation -->
-            <aside class="w-64 flex-shrink-0">
-                <nav class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-3 space-y-1 sticky top-20">
-                    <button onclick="showTab('dashboard')" id="nav-dashboard" class="nav-btn w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium rounded-xl text-blue-600 bg-blue-50/80">
-                        <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Dashboard
-                    </button>
-
-                    <button onclick="showTab('hr')" id="nav-hr" class="nav-btn w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900">
-                        <i data-lucide="users" class="w-4 h-4"></i> Human Resources
-                    </button>
-
-                    <button onclick="showTab('accounts')" id="nav-accounts" class="nav-btn w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900">
-                        <i data-lucide="receipt" class="w-4 h-4"></i> Accounts & Finance
-                    </button>
-
-                    <button onclick="showTab('store')" id="nav-store" class="nav-btn w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900">
-                        <i data-lucide="package" class="w-4 h-4"></i> Store Management
-                    </button>
-
-                    <button onclick="showTab('production')" id="nav-production" class="nav-btn w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900">
-                        <i data-lucide="factory" class="w-4 h-4"></i> Production
-                    </button>
-
-                    <button onclick="showTab('vendors')" id="nav-vendors" class="nav-btn w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900">
-                        <i data-lucide="truck" class="w-4 h-4"></i> Vendors & PO
-                    </button>
-
-                    <button onclick="showTab('catalogue')" id="nav-catalogue" class="nav-btn w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900">
-                        <i data-lucide="book-open" class="w-4 h-4"></i> Product Catalogue
-                    </button>
-
-                    <button onclick="showTab('gatepass')" id="nav-gatepass" class="nav-btn w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900">
-                        <i data-lucide="shield-check" class="w-4 h-4"></i> Gate Pass / Visitor
-                    </button>
-                </nav>
-            </aside>
-
-            <!-- Dynamic Tab Content Area -->
-            <main class="flex-1 min-w-0">
-
-                <!-- 1. DASHBOARD TAB -->
-                <div id="tab-dashboard" class="tab-content space-y-6">
-                    <!-- Key KPI Metrics -->
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-                            <div class="flex items-center justify-between text-slate-500 mb-2">
-                                <span class="text-xs font-semibold uppercase">Total Workforce</span>
-                                <i data-lucide="users" class="w-4 h-4 text-blue-600"></i>
-                            </div>
-                            <div class="text-2xl font-bold text-slate-900">48 Staff</div>
-                            <div class="text-xs text-emerald-600 font-medium mt-1">42 Present Today</div>
+        <div class="flex items-center space-x-3">
+            <!-- Notifications Dropdown -->
+            <div class="relative">
+                <button onclick="toggleNotifications()" class="p-2 bg-slate-700 hover:bg-slate-600 rounded-lg relative text-slate-200 transition">
+                    <i data-lucide="bell" class="w-5 h-5"></i>
+                    <span class="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full animate-ping"></span>
+                    <span class="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full"></span>
+                </button>
+                <div id="notificationsMenu" class="hidden absolute right-0 mt-2 w-80 bg-slate-800 border border-slate-700 rounded-xl shadow-2xl p-4 z-50">
+                    <h4 class="text-sm font-bold text-slate-200 border-b border-slate-700 pb-2 mb-2 flex items-center justify-between">
+                        <span>Notifications</span>
+                        <span class="text-xs text-indigo-400 font-normal">3 New</span>
+                    </h4>
+                    <div class="space-y-2 text-xs">
+                        <div class="p-2 bg-slate-700/50 rounded border border-slate-600">
+                            <p class="font-semibold text-slate-200">25KVA Transformer Run</p>
+                            <p class="text-slate-400">Batch #52 is currently active in Production.</p>
                         </div>
-
-                        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-                            <div class="flex items-center justify-between text-slate-500 mb-2">
-                                <span class="text-xs font-semibold uppercase">Active Work Orders</span>
-                                <i data-lucide="activity" class="w-4 h-4 text-amber-600"></i>
-                            </div>
-                            <div class="text-2xl font-bold text-slate-900">25KVA (52 Pcs)</div>
-                            <div class="text-xs text-amber-600 font-medium mt-1">Status: Running Batch</div>
-                        </div>
-
-                        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-                            <div class="flex items-center justify-between text-slate-500 mb-2">
-                                <span class="text-xs font-semibold uppercase">Daily Cash Expenses</span>
-                                <i data-lucide="wallet" class="w-4 h-4 text-indigo-600"></i>
-                            </div>
-                            <div class="text-2xl font-bold text-slate-900">₹ 14,250</div>
-                            <div class="text-xs text-slate-400 font-medium mt-1">Updated Today</div>
-                        </div>
-
-                        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-                            <div class="flex items-center justify-between text-slate-500 mb-2">
-                                <span class="text-xs font-semibold uppercase">Pending Invoices</span>
-                                <i data-lucide="alert-circle" class="w-4 h-4 text-rose-600"></i>
-                            </div>
-                            <div class="text-2xl font-bold text-slate-900">3 Pending</div>
-                            <div class="text-xs text-rose-600 font-medium mt-1">Action Required</div>
-                        </div>
-                    </div>
-
-                    <!-- Operational Overview Cards -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- Quick Attendance Live Tracker -->
-                        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-                            <h3 class="font-bold text-slate-900 mb-4 flex items-center justify-between">
-                                <span>Live Attendance Tracker</span>
-                                <span class="text-xs bg-emerald-100 text-emerald-700 px-2.5 py-1 rounded-full font-semibold">Today Shift</span>
-                            </h3>
-                            <div class="space-y-3">
-                                <div class="flex items-center justify-between p-3 bg-slate-50 rounded-xl">
-                                    <span class="text-sm font-medium">Present Staff</span>
-                                    <span class="text-sm font-bold text-emerald-600">42</span>
-                                </div>
-                                <div class="flex items-center justify-between p-3 bg-slate-50 rounded-xl">
-                                    <span class="text-sm font-medium">Absent Staff</span>
-                                    <span class="text-sm font-bold text-rose-600">6</span>
-                                </div>
-                                <div class="flex items-center justify-between p-3 bg-slate-50 rounded-xl">
-                                    <span class="text-sm font-medium">Overtime (OT) Logged Today</span>
-                                    <span class="text-sm font-bold text-blue-600">28 Hours</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Store Inventory Summary -->
-                        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-                            <h3 class="font-bold text-slate-900 mb-4 flex items-center justify-between">
-                                <span>Inventory Quick Summary</span>
-                                <button onclick="showTab('store')" class="text-xs text-blue-600 font-semibold hover:underline">View Store</button>
-                            </h3>
-                            <div class="space-y-3">
-                                <div class="flex items-center justify-between p-3 bg-slate-50 rounded-xl">
-                                    <span class="text-sm font-medium">Copper Wire / Strip Stock</span>
-                                    <span class="text-sm font-bold text-slate-800">1,250 Kg (Sufficient)</span>
-                                </div>
-                                <div class="flex items-center justify-between p-3 bg-slate-50 rounded-xl">
-                                    <span class="text-sm font-medium">Transformer Oil</span>
-                                    <span class="text-sm font-bold text-amber-600">450 Ltr (Low Stock)</span>
-                                </div>
-                                <div class="flex items-center justify-between p-3 bg-slate-50 rounded-xl">
-                                    <span class="text-sm font-medium">CRGO Core Sheets</span>
-                                    <span class="text-sm font-bold text-slate-800">3,400 Kg</span>
-                                </div>
-                            </div>
+                        <div class="p-2 bg-slate-700/50 rounded border border-slate-600">
+                            <p class="font-semibold text-slate-200">ESIC Verification Required</p>
+                            <p class="text-slate-400">2 New employees pending ESIC portal registration.</p>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- 2. HUMAN RESOURCES (HR) TAB -->
-                <div id="tab-hr" class="tab-content hidden space-y-6">
-                    <!-- HR Sub Navigation Header -->
-                    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-4">
-                        <div class="flex space-x-2">
-                            <button onclick="switchHrSubTab('attendance')" id="hrSub-attendance" class="px-4 py-2 text-xs font-bold rounded-lg bg-blue-600 text-white">Month Attendance & OT</button>
-                            <button onclick="switchHrSubTab('time')" id="hrSub-time" class="px-4 py-2 text-xs font-bold rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200">Time Manager</button>
-                            <button onclick="switchHrSubTab('masterroll')" id="hrSub-masterroll" class="px-4 py-2 text-xs font-bold rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200">Master Roll & Payroll</button>
-                        </div>
-                        <div class="flex gap-2">
-                            <a href="https://uidai.gov.in" target="_blank" class="px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-white text-xs font-semibold rounded-lg flex items-center gap-1">
-                                <i data-lucide="external-link" class="w-3.5 h-3.5"></i> Aadhaar KYC Portal
-                            </a>
-                            <a href="https://www.esic.gov.in" target="_blank" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-lg flex items-center gap-1">
-                                <i data-lucide="external-link" class="w-3.5 h-3.5"></i> ESIC Web Portal
-                            </a>
-                        </div>
+            <!-- Online Meet Button -->
+            <a href="https://meet.google.com/new" target="_blank" class="flex items-center space-x-1 bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-sm font-semibold transition shadow">
+                <i data-lucide="video" class="w-4 h-4"></i>
+                <span class="hidden sm:inline">Online Meet</span>
+            </a>
+
+            <!-- User Menu -->
+            <button onclick="logout()" class="p-2 bg-red-600/20 hover:bg-red-600/30 text-red-400 rounded-lg text-sm font-semibold border border-red-500/30 transition">
+                <i data-lucide="log-out" class="w-5 h-5"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Container Layout -->
+    <div class="flex min-h-[calc(100vh-61px)] relative z-10">
+        
+        <!-- Sidebar Navigation -->
+        <aside class="no-print w-64 bg-slate-800/60 border-r border-slate-700/60 p-4 space-y-2 flex-shrink-0 hidden md:block">
+            <nav class="space-y-1 text-sm font-medium">
+                <button onclick="showPage('dashboard')" class="nav-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-slate-300 hover:bg-slate-700/50 hover:text-white transition">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5 text-indigo-400"></i>
+                    <span>Dashboard</span>
+                </button>
+                <button onclick="showPage('hr')" class="nav-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-slate-300 hover:bg-slate-700/50 hover:text-white transition">
+                    <i data-lucide="users" class="w-5 h-5 text-blue-400"></i>
+                    <span>Human Resources</span>
+                </button>
+                <button onclick="showPage('accounts')" class="nav-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-slate-300 hover:bg-slate-700/50 hover:text-white transition">
+                    <i data-lucide="calculator" class="w-5 h-5 text-emerald-400"></i>
+                    <span>Accounts & Finance</span>
+                </button>
+                <button onclick="showPage('store')" class="nav-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-slate-300 hover:bg-slate-700/50 hover:text-white transition">
+                    <i data-lucide="boxes" class="w-5 h-5 text-amber-400"></i>
+                    <span>Store Register</span>
+                </button>
+                <button onclick="showPage('production')" class="nav-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-slate-300 hover:bg-slate-700/50 hover:text-white transition">
+                    <i data-lucide="factory" class="w-5 h-5 text-purple-400"></i>
+                    <span>Production Tracker</span>
+                </button>
+                <button onclick="showPage('vendors')" class="nav-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-slate-300 hover:bg-slate-700/50 hover:text-white transition">
+                    <i data-lucide="truck" class="w-5 h-5 text-rose-400"></i>
+                    <span>Vendors & PO</span>
+                </button>
+                <button onclick="showPage('catalog')" class="nav-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-slate-300 hover:bg-slate-700/50 hover:text-white transition">
+                    <i data-lucide="book-open" class="w-5 h-5 text-cyan-400"></i>
+                    <span>Product Catalog</span>
+                </button>
+                <button onclick="showPage('about')" class="nav-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-slate-300 hover:bg-slate-700/50 hover:text-white transition">
+                    <i data-lucide="info" class="w-5 h-5 text-teal-400"></i>
+                    <span>About Us & HR Info</span>
+                </button>
+            </nav>
+        </aside>
+
+        <!-- Main Content Canvas -->
+        <main class="flex-1 p-4 md:p-6 overflow-x-hidden">
+            
+            <!-- Dashboard View -->
+            <section id="dashboardPage" class="page-view space-y-6">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-gradient-to-r from-slate-800 to-indigo-950 p-6 rounded-2xl border border-slate-700 shadow-xl">
+                    <div>
+                        <h1 class="text-2xl font-bold text-white flex items-center gap-2">
+                            <span>Welcome to</span>
+                            <span id="welcomeCompTitle" class="text-indigo-400">Bigvolt Transformers</span>
+                        </h1>
+                        <p id="welcomeCompAddr" class="text-xs text-slate-400 mt-1">H1-702 RIICO Industrial Area, Khushkhera, Alwar, Rajasthan - 301707</p>
                     </div>
-
-                    <!-- HR SUB TAB: 1. Month Attendance & OT Matrix -->
-                    <div id="hrContent-attendance" class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-                        <div class="flex items-center justify-between">
-                            <h3 class="font-bold text-slate-900">31-Day Attendance & Overtime Log (50 Employees)</h3>
-                            <button onclick="addEmployeeRow()" class="px-3 py-1.5 bg-blue-600 text-white text-xs font-semibold rounded-lg hover:bg-blue-700 flex items-center gap-1">
-                                <i data-lucide="plus" class="w-3.5 h-3.5"></i> Add New Employee
-                            </button>
-                        </div>
-
-                        <!-- 31 Days Table Grid -->
-                        <div class="overflow-x-auto custom-scrollbar border border-slate-200 rounded-xl">
-                            <table class="w-full text-xs text-left text-slate-600">
-                                <thead class="bg-slate-800 text-white font-semibold">
-                                    <tr>
-                                        <th class="p-2.5 border-r border-slate-700 min-w-[50px] text-center">Sr</th>
-                                        <th class="p-2.5 border-r border-slate-700 min-w-[180px]">Employee Details</th>
-                                        <th class="p-2.5 border-r border-slate-700 min-w-[120px]">KYC & ESIC</th>
-                                        <!-- Generating 31 Days Column Headers -->
-                                        <script>
-                                            for(let d=1; d<=31; d++){
-                                                document.write(`<th class="p-1 border-r border-slate-700 text-center min-w-[28px]">${d}</th>`);
-                                            }
-                                        </script>
-                                        <th class="p-2.5 min-w-[80px] text-center">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="employeeAttendanceTableBody" class="divide-y divide-slate-200">
-                                    <!-- Dynamic rows inserted via JS -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <!-- HR SUB TAB: 2. Time Manager -->
-                    <div id="hrContent-time" class="hidden bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-                        <h3 class="font-bold text-slate-900">In-Time & Out-Time Shift Manager</h3>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-xs text-left text-slate-600">
-                                <thead class="bg-slate-100 text-slate-700 font-bold">
-                                    <tr>
-                                        <th class="p-3">Sr No</th>
-                                        <th class="p-3">Employee Name</th>
-                                        <th class="p-3">Shift Date</th>
-                                        <th class="p-3">In Time</th>
-                                        <th class="p-3">Out Time</th>
-                                        <th class="p-3">Total Hours</th>
-                                        <th class="p-3">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="timeManagerTableBody" class="divide-y divide-slate-100">
-                                    <!-- Populated dynamically -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <!-- HR SUB TAB: 3. Master Roll & Payroll -->
-                    <div id="hrContent-masterroll" class="hidden bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-                        <h3 class="font-bold text-slate-900">Master Roll Consolidated Payroll Sheet</h3>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-xs text-left text-slate-600">
-                                <thead class="bg-slate-800 text-white font-bold">
-                                    <tr>
-                                        <th class="p-3">Sr</th>
-                                        <th class="p-3">Name & Father Name</th>
-                                        <th class="p-3">Basic Wage</th>
-                                        <th class="p-3">Present Days</th>
-                                        <th class="p-3">OT Hours</th>
-                                        <th class="p-3">Advance Edit</th>
-                                        <th class="p-3">ESIC Cut</th>
-                                        <th class="p-3">Gross Salary</th>
-                                        <th class="p-3">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="masterRollTableBody" class="divide-y divide-slate-200">
-                                    <!-- Master Roll Dynamic rows -->
-                                </tbody>
-                            </table>
-                        </div>
+                    <div class="flex items-center gap-3">
+                        <span class="px-3 py-1 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-full text-xs font-semibold flex items-center gap-1">
+                            <span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span> Systems Active
+                        </span>
                     </div>
                 </div>
 
-                <!-- 3. ACCOUNTS & FINANCE TAB -->
-                <div id="tab-accounts" class="tab-content hidden space-y-6">
-                    <!-- Sub Nav for Accounts -->
-                    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex gap-2">
-                        <button onclick="switchAccSubTab('expenses')" id="accSub-expenses" class="px-4 py-2 text-xs font-bold rounded-lg bg-blue-600 text-white">Daily Expenses</button>
-                        <button onclick="switchAccSubTab('purchasesale')" id="accSub-purchasesale" class="px-4 py-2 text-xs font-bold rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200">Purchase & Sale Billing</button>
-                        <button onclick="switchAccSubTab('contractor')" id="accSub-contractor" class="px-4 py-2 text-xs font-bold rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200">Contractor Payment Slip</button>
+                <!-- Live Metrics Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="bg-slate-800/80 p-5 rounded-xl border border-slate-700 shadow">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-xs font-semibold text-slate-400 uppercase">Active Attendance</p>
+                                <h3 class="text-2xl font-bold text-white mt-1">42 / 50</h3>
+                            </div>
+                            <div class="p-2 bg-blue-500/20 text-blue-400 rounded-lg"><i data-lucide="user-check" class="w-6 h-6"></i></div>
+                        </div>
+                        <p class="text-xs text-emerald-400 mt-3 font-medium">84% Present Today</p>
                     </div>
 
-                    <!-- ACC SUB TAB 1: Daily Cash Expenses -->
-                    <div id="accContent-expenses" class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-                        <div class="flex justify-between items-center">
-                            <h3 class="font-bold text-slate-900">Per-Day Cash Expenses Entry Log</h3>
-                            <button onclick="addExpenseRow()" class="px-3 py-1.5 bg-blue-600 text-white text-xs font-semibold rounded-lg hover:bg-blue-700 flex items-center gap-1">
-                                <i data-lucide="plus" class="w-3.5 h-3.5"></i> Add Daily Expense
-                            </button>
+                    <div class="bg-slate-800/80 p-5 rounded-xl border border-slate-700 shadow">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-xs font-semibold text-slate-400 uppercase">Active Production Run</p>
+                                <h3 class="text-2xl font-bold text-indigo-400 mt-1">25KVA Batch</h3>
+                            </div>
+                            <div class="p-2 bg-indigo-500/20 text-indigo-400 rounded-lg"><i data-lucide="zap" class="w-6 h-6"></i></div>
                         </div>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-xs text-left text-slate-600">
-                                <thead class="bg-slate-100 font-bold text-slate-700">
-                                    <tr>
-                                        <th class="p-3">Date</th>
-                                        <th class="p-3">Expense Head / Details</th>
-                                        <th class="p-3">Amount (₹)</th>
-                                        <th class="p-3">Paid To / Purpose</th>
-                                        <th class="p-3">Approval Access</th>
-                                        <th class="p-3">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="expensesTableBody" class="divide-y divide-slate-200">
-                                    <!-- Dynamic Rows -->
-                                </tbody>
-                            </table>
-                        </div>
+                        <p class="text-xs text-slate-400 mt-3 font-medium">Target: 52 Units</p>
                     </div>
 
-                    <!-- ACC SUB TAB 2: Purchase & Sale Billing -->
-                    <div id="accContent-purchasesale" class="hidden bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-                        <div class="flex justify-between items-center">
-                            <h3 class="font-bold text-slate-900">Purchase & Sales Register (Tax Invoices)</h3>
-                            <button onclick="addInvoiceRow()" class="px-3 py-1.5 bg-blue-600 text-white text-xs font-semibold rounded-lg hover:bg-blue-700 flex items-center gap-1">
-                                <i data-lucide="plus" class="w-3.5 h-3.5"></i> Add Bill Entry
-                            </button>
+                    <div class="bg-slate-800/80 p-5 rounded-xl border border-slate-700 shadow">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-xs font-semibold text-slate-400 uppercase">Pending ESIC KYC</p>
+                                <h3 class="text-2xl font-bold text-amber-400 mt-1">4 Employees</h3>
+                            </div>
+                            <div class="p-2 bg-amber-500/20 text-amber-400 rounded-lg"><i data-lucide="shield-alert" class="w-6 h-6"></i></div>
                         </div>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-xs text-left text-slate-600">
-                                <thead class="bg-slate-800 text-white font-bold">
-                                    <tr>
-                                        <th class="p-2.5">Type</th>
-                                        <th class="p-2.5">Invoice No</th>
-                                        <th class="p-2.5">Date</th>
-                                        <th class="p-2.5">Party Name</th>
-                                        <th class="p-2.5">Item Name</th>
-                                        <th class="p-2.5">Taxable (₹)</th>
-                                        <th class="p-2.5">Total Amount (₹)</th>
-                                        <th class="p-2.5">E-Way Bill No</th>
-                                        <th class="p-2.5">Payment</th>
-                                        <th class="p-2.5">Party Bank Details</th>
-                                        <th class="p-2.5">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="billingTableBody" class="divide-y divide-slate-200">
-                                    <!-- Dynamic billing rows -->
-                                </tbody>
-                            </table>
-                        </div>
+                        <p class="text-xs text-amber-400 mt-3 font-medium">Action Required</p>
                     </div>
 
-                    <!-- ACC SUB TAB 3: Contractor Payment Slip Generator -->
-                    <div id="accContent-contractor" class="hidden bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-6">
-                        <h3 class="font-bold text-slate-900 border-b pb-2">Contractor Job Work Invoice Generator</h3>
-
-                        <!-- Form Controls -->
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs">
+                    <div class="bg-slate-800/80 p-5 rounded-xl border border-slate-700 shadow">
+                        <div class="flex justify-between items-start">
                             <div>
-                                <label class="font-semibold text-slate-700">Contractor Name</label>
-                                <input type="text" id="cp_name" value="Sharma Fabricators" class="w-full mt-1 p-2 border rounded">
+                                <p class="text-xs font-semibold text-slate-400 uppercase">Today's Expenses</p>
+                                <h3 class="text-2xl font-bold text-emerald-400 mt-1">₹ 14,250</h3>
                             </div>
-                            <div>
-                                <label class="font-semibold text-slate-700">Job Work Description</label>
-                                <input type="text" id="cp_job" value="Tank Fabrication & Welding Work" class="w-full mt-1 p-2 border rounded">
-                            </div>
-                            <div>
-                                <label class="font-semibold text-slate-700">Base Amount (₹)</label>
-                                <input type="number" id="cp_amount" value="50000" oninput="calculateContractorSlip()" class="w-full mt-1 p-2 border rounded">
-                            </div>
-                            <div>
-                                <label class="font-semibold text-slate-700">Advance Deduction (₹)</label>
-                                <input type="number" id="cp_advance" value="5000" oninput="calculateContractorSlip()" class="w-full mt-1 p-2 border rounded">
-                            </div>
-                            <div>
-                                <label class="font-semibold text-slate-700">Fooding Deduction (₹)</label>
-                                <input type="number" id="cp_fooding" value="2000" oninput="calculateContractorSlip()" class="w-full mt-1 p-2 border rounded">
-                            </div>
-                            <div class="flex items-end">
-                                <button onclick="generatePdfSlip()" class="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded flex items-center justify-center gap-1">
-                                    <i data-lucide="download" class="w-4 h-4"></i> Download PDF Voucher
-                                </button>
-                            </div>
+                            <div class="p-2 bg-emerald-500/20 text-emerald-400 rounded-lg"><i data-lucide="indian-rupee" class="w-6 h-6"></i></div>
                         </div>
-
-                        <!-- LIVE PREVIEW TEMPLATE -->
-                        <div id="contractorSlipTemplate" class="bg-white p-8 border-2 border-slate-300 rounded-xl max-w-2xl mx-auto space-y-6 text-xs shadow-lg">
-                            <div class="border-b-2 border-slate-900 pb-4 text-center">
-                                <h2 id="slipCompanyName" class="text-xl font-black text-slate-900 uppercase">Bigvolt Transformers & Switchgear Pvt Ltd</h2>
-                                <p id="slipAddress" class="text-slate-600 mt-1">H1 - 702 RIICO Industrial Area, Khushkhera, Alwar, Rajasthan, 301707</p>
-                                <p class="text-slate-600">GSTIN: <span id="slipGst" class="font-mono font-bold">08AAKCB0266E1ZV</span> | Contact: 7988340039</p>
-                            </div>
-
-                            <div class="flex justify-between font-semibold border-b pb-2">
-                                <div>INVOICE NO: <span id="slipInvoiceNo" class="font-mono text-blue-600">INV-2026-001</span></div>
-                                <div>DATE: <span id="slipDate">2026-10-07</span></div>
-                            </div>
-
-                            <div class="space-y-2">
-                                <p><strong>Contractor:</strong> <span id="slipContractor">Sharma Fabricators</span></p>
-                                <p><strong>Job Description:</strong> <span id="slipJob">Tank Fabrication & Welding Work</span></p>
-                            </div>
-
-                            <table class="w-full border-collapse border border-slate-300 text-left">
-                                <thead class="bg-slate-100">
-                                    <tr>
-                                        <th class="border border-slate-300 p-2">Particulars</th>
-                                        <th class="border border-slate-300 p-2 text-right">Amount (₹)</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td class="border border-slate-300 p-2">Total Job Work Amount</td>
-                                        <td id="slipGross" class="border border-slate-300 p-2 text-right font-mono">50,000.00</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="border border-slate-300 p-2 text-rose-600">Less: Advance Deduction</td>
-                                        <td id="slipAdvDed" class="border border-slate-300 p-2 text-right font-mono text-rose-600">- 5,000.00</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="border border-slate-300 p-2 text-rose-600">Less: Fooding Charges</td>
-                                        <td id="slipFoodDed" class="border border-slate-300 p-2 text-right font-mono text-rose-600">- 2,000.00</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="border border-slate-300 p-2 text-indigo-600">Less: TDS @ 1% Deduction</td>
-                                        <td id="slipTds" class="border border-slate-300 p-2 text-right font-mono text-indigo-600">- 500.00</td>
-                                    </tr>
-                                    <tr class="bg-slate-100 font-bold">
-                                        <td class="border border-slate-300 p-2">Net Payable Amount</td>
-                                        <td id="slipNet" class="border border-slate-300 p-2 text-right font-mono text-emerald-700 text-sm">₹ 42,500.00</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-
-                            <div class="flex justify-between pt-12">
-                                <div class="text-center border-t border-slate-400 w-36 pt-1">
-                                    <p class="font-bold">Verified By</p>
-                                    <p class="text-[10px] text-slate-500">Authorized Officer</p>
-                                </div>
-                                <div class="text-center border-t border-slate-400 w-36 pt-1">
-                                    <p class="font-bold">Contractor Sign</p>
-                                    <p class="text-[10px] text-slate-500">Receiver Signature</p>
-                                </div>
-                            </div>
-                        </div>
+                        <p class="text-xs text-slate-400 mt-3 font-medium">8 Cash Entries Recorded</p>
                     </div>
                 </div>
+            </section>
 
-                <!-- 4. STORE MANAGEMENT TAB -->
-                <div id="tab-store" class="tab-content hidden space-y-6">
-                    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex justify-between items-center">
-                        <div class="flex space-x-2">
-                            <button onclick="switchStoreTab('inward')" id="storeTab-inward" class="px-4 py-2 text-xs font-bold rounded-lg bg-blue-600 text-white">Inward Items Log</button>
-                            <button onclick="switchStoreTab('outward')" id="storeTab-outward" class="px-4 py-2 text-xs font-bold rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200">Outward Items Log</button>
-                        </div>
-                        <button onclick="addStoreItem()" class="px-3 py-1.5 bg-blue-600 text-white text-xs font-semibold rounded-lg hover:bg-blue-700 flex items-center gap-1">
-                            <i data-lucide="plus" class="w-3.5 h-3.5"></i> Add Store Entry
+            <!-- Human Resources (HR) View -->
+            <section id="hrPage" class="page-view hidden space-y-6">
+                <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-700 pb-4">
+                    <div>
+                        <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                            <i data-lucide="users" class="w-6 h-6 text-blue-400"></i> Human Resources Module
+                        </h2>
+                        <p class="text-xs text-slate-400">Manage 50+ Employee Attendance, KYC, ESIC Links & Payroll</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <a href="https://uidai.gov.in" target="_blank" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold transition flex items-center gap-1 shadow">
+                            <i data-lucide="external-link" class="w-3.5 h-3.5"></i> Aadhaar Portal
+                        </a>
+                        <a href="https://www.esic.gov.in" target="_blank" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold transition flex items-center gap-1 shadow">
+                            <i data-lucide="external-link" class="w-3.5 h-3.5"></i> ESIC Portal
+                        </a>
+                        <button onclick="addEmployeePrompt()" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-semibold transition flex items-center gap-1 shadow">
+                            <i data-lucide="user-plus" class="w-3.5 h-3.5"></i> Add Employee
                         </button>
                     </div>
+                </div>
 
-                    <!-- Store Entries Data Table -->
-                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm overflow-x-auto">
-                        <table class="w-full text-xs text-left text-slate-600">
-                            <thead class="bg-slate-800 text-white font-bold">
+                <!-- HR Tabs -->
+                <div class="flex border-b border-slate-700 space-x-4 text-sm font-semibold">
+                    <button onclick="switchHrSubTab('attTab')" class="hr-tab-btn text-indigo-400 border-b-2 border-indigo-500 pb-2">31-Day Attendance Matrix</button>
+                    <button onclick="switchHrSubTab('kycTab')" class="hr-tab-btn text-slate-400 pb-2 hover:text-slate-200">KYC & ESIC Directory</button>
+                    <button onclick="switchHrSubTab('payrollTab')" class="hr-tab-btn text-slate-400 pb-2 hover:text-slate-200">Master Roll & Salary Slips</button>
+                </div>
+
+                <!-- Tab 1: 31-Day Attendance Sheet -->
+                <div id="attTab" class="hr-sub-view space-y-4">
+                    <div class="overflow-x-auto bg-slate-800 rounded-xl border border-slate-700 shadow">
+                        <table class="w-full text-left text-xs text-slate-300">
+                            <thead class="bg-slate-900 text-slate-400 uppercase font-semibold border-b border-slate-700">
                                 <tr>
-                                    <th class="p-2.5">Type</th>
-                                    <th class="p-2.5">Invoice No</th>
-                                    <th class="p-2.5">Date & Time</th>
-                                    <th class="p-2.5">Party Name</th>
-                                    <th class="p-2.5">Item Description</th>
-                                    <th class="p-2.5">Quantity</th>
-                                    <th class="p-2.5">Vehicle No</th>
-                                    <th class="p-2.5">Given To / Receiver</th>
-                                    <th class="p-2.5">Actions</th>
+                                    <th class="p-3">S.No</th>
+                                    <th class="p-3 min-w-[150px]">Employee Name</th>
+                                    <th class="p-3 min-w-[100px]">In / Out Time</th>
+                                    <th class="p-3 min-w-[80px]">OT (Hrs)</th>
+                                    <!-- 31 Days Header -->
+                                    <script>
+                                        for(let d=1; d<=31; d++){
+                                            document.write(`<th class="p-1 text-center">${d}</th>`);
+                                        }
+                                    </script>
+                                    <th class="p-3 text-center">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody id="storeTableBody" class="divide-y divide-slate-200">
-                                <!-- Dynamic Rows -->
+                            <tbody id="attendanceTableBody" class="divide-y divide-slate-700/60">
+                                <!-- Dynamic JS Rows for 50 Employees -->
                             </tbody>
                         </table>
                     </div>
                 </div>
 
-                <!-- 5. PRODUCTION TAB -->
-                <div id="tab-production" class="tab-content hidden space-y-6">
-                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-                        <div class="flex justify-between items-center">
-                            <h3 class="font-bold text-slate-900">Work Orders & Production Scheduling</h3>
-                            <button onclick="addProductionRow()" class="px-3 py-1.5 bg-blue-600 text-white text-xs font-semibold rounded-lg hover:bg-blue-700 flex items-center gap-1">
-                                <i data-lucide="plus" class="w-3.5 h-3.5"></i> Add New Batch
-                            </button>
-                        </div>
-
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-xs text-left text-slate-600">
-                                <thead class="bg-slate-100 text-slate-700 font-bold">
-                                    <tr>
-                                        <th class="p-3">Work Order ID</th>
-                                        <th class="p-3">Item Specification</th>
-                                        <th class="p-3">Quantity Batch</th>
-                                        <th class="p-3">Production Incharge</th>
-                                        <th class="p-3">Category Status</th>
-                                        <th class="p-3">Material Requirement</th>
-                                        <th class="p-3">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="productionTableBody" class="divide-y divide-slate-200">
-                                    <!-- Dynamic Production Batches -->
-                                </tbody>
-                            </table>
-                        </div>
+                <!-- Tab 2: KYC Directory -->
+                <div id="kycTab" class="hr-sub-view hidden space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="kycCardsContainer">
+                        <!-- Dynamic KYC Employee Cards -->
                     </div>
                 </div>
 
-                <!-- 6. VENDORS & PO TAB -->
-                <div id="tab-vendors" class="tab-content hidden space-y-6">
-                    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex space-x-2">
-                        <button onclick="switchVendorTab('directory')" id="venTab-directory" class="px-4 py-2 text-xs font-bold rounded-lg bg-blue-600 text-white">50 Vendors Directory</button>
-                        <button onclick="switchVendorTab('po')" id="venTab-po" class="px-4 py-2 text-xs font-bold rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200">Purchase Order (PO) Generator</button>
+                <!-- Tab 3: Master Payroll Roll -->
+                <div id="payrollTab" class="hr-sub-view hidden space-y-4">
+                    <div class="overflow-x-auto bg-slate-800 rounded-xl border border-slate-700 shadow">
+                        <table class="w-full text-left text-xs text-slate-300">
+                            <thead class="bg-slate-900 text-slate-400 uppercase font-semibold border-b border-slate-700">
+                                <tr>
+                                    <th class="p-3">S.No</th>
+                                    <th class="p-3">Employee Name</th>
+                                    <th class="p-3">Base Salary</th>
+                                    <th class="p-3">OT Pay</th>
+                                    <th class="p-3">Gross Salary</th>
+                                    <th class="p-3">ESIC Deduct</th>
+                                    <th class="p-3">Advance/Fooding</th>
+                                    <th class="p-3">Net Payable</th>
+                                    <th class="p-3 text-center">Salary Slip</th>
+                                </tr>
+                            </thead>
+                            <tbody id="payrollTableBody" class="divide-y divide-slate-700/60">
+                                <!-- Dynamic Payroll Rows -->
+                            </tbody>
+                        </table>
                     </div>
+                </div>
+            </section>
 
-                    <!-- Vendor Directory -->
-                    <div id="venContent-directory" class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-                        <div class="flex justify-between items-center">
-                            <h3 class="font-bold text-slate-900">Registered Suppliers & Vendors Directory</h3>
-                            <button onclick="addVendorRow()" class="px-3 py-1.5 bg-blue-600 text-white text-xs font-semibold rounded-lg hover:bg-blue-700 flex items-center gap-1">
-                                <i data-lucide="plus" class="w-3.5 h-3.5"></i> Add Vendor
-                            </button>
-                        </div>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-xs text-left text-slate-600">
-                                <thead class="bg-slate-800 text-white font-bold">
-                                    <tr>
-                                        <th class="p-2.5">Sr</th>
-                                        <th class="p-2.5">Party Name</th>
-                                        <th class="p-2.5">Supplied Items</th>
-                                        <th class="p-2.5">Contact No</th>
-                                        <th class="p-2.5">Location Address</th>
-                                        <th class="p-2.5">Item Description</th>
-                                        <th class="p-2.5">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="vendorTableBody" class="divide-y divide-slate-200">
-                                    <!-- Populated dynamically up to 50 entries -->
-                                </tbody>
-                            </table>
-                        </div>
+            <!-- Accounts & Finance View -->
+            <section id="accountsPage" class="page-view hidden space-y-6">
+                <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-700 pb-4">
+                    <div>
+                        <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                            <i data-lucide="calculator" class="w-6 h-6 text-emerald-400"></i> Accounts & Financial Management
+                        </h2>
+                        <p class="text-xs text-slate-400">Daily Cash Expenses, Billing & Contractor Job Work Vouchers</p>
                     </div>
+                </div>
 
-                    <!-- PO Generator -->
-                    <div id="venContent-po" class="hidden bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-                        <h3 class="font-bold text-slate-900">Generate Purchase Order (PO)</h3>
-                        <div class="p-6 border-2 border-slate-200 rounded-xl space-y-4 max-w-xl mx-auto bg-slate-50 text-xs">
-                            <div class="text-center border-b pb-2">
-                                <h4 class="font-bold text-sm text-slate-900">PURCHASE ORDER TEMPLATE</h4>
-                            </div>
-                            <div class="grid grid-cols-2 gap-3">
-                                <div>
-                                    <label class="font-semibold">Vendor Name</label>
-                                    <input type="text" class="w-full p-2 border rounded mt-1" value="Precision Copper Wires Ltd">
-                                </div>
-                                <div>
-                                    <label class="font-semibold">PO Date</label>
-                                    <input type="date" class="w-full p-2 border rounded mt-1" value="2026-10-07">
-                                </div>
+                <!-- Accounts Navigation Tabs -->
+                <div class="flex border-b border-slate-700 space-x-4 text-sm font-semibold">
+                    <button onclick="switchAccSubTab('expTab')" class="acc-tab-btn text-emerald-400 border-b-2 border-emerald-500 pb-2">Daily Cash Expenses</button>
+                    <button onclick="switchAccSubTab('billingTab')" class="acc-tab-btn text-slate-400 pb-2 hover:text-slate-200">Purchase & Sale Ledger</button>
+                    <button onclick="switchAccSubTab('contractorTab')" class="acc-tab-btn text-slate-400 pb-2 hover:text-slate-200">Contractor Payment Voucher</button>
+                </div>
+
+                <!-- Sub View: Daily Cash Expenses -->
+                <div id="expTab" class="acc-sub-view space-y-4">
+                    <div class="flex justify-between items-center bg-slate-800 p-4 rounded-xl border border-slate-700">
+                        <h3 class="text-sm font-bold text-white">Cash Expense Register</h3>
+                        <button onclick="addExpensePrompt()" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold transition flex items-center gap-1 shadow">
+                            <i data-lucide="plus" class="w-3.5 h-3.5"></i> Add Daily Expense
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto bg-slate-800 rounded-xl border border-slate-700 shadow">
+                        <table class="w-full text-left text-xs text-slate-300">
+                            <thead class="bg-slate-900 text-slate-400 uppercase font-semibold border-b border-slate-700">
+                                <tr>
+                                    <th class="p-3">Date</th>
+                                    <th class="p-3">Category / Particulars</th>
+                                    <th class="p-3">Paid To / Description</th>
+                                    <th class="p-3">Amount (₹)</th>
+                                    <th class="p-3">Approved By</th>
+                                    <th class="p-3 text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="expenseTableBody" class="divide-y divide-slate-700/60">
+                                <!-- Dynamic Expense Rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Sub View: Purchase & Sale Ledger -->
+                <div id="billingTab" class="acc-sub-view hidden space-y-4">
+                    <div class="flex justify-between items-center bg-slate-800 p-4 rounded-xl border border-slate-700">
+                        <h3 class="text-sm font-bold text-white">Invoices & Party Accounts</h3>
+                        <button onclick="addInvoicePrompt()" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-semibold transition flex items-center gap-1 shadow">
+                            <i data-lucide="plus" class="w-3.5 h-3.5"></i> Record Invoice
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto bg-slate-800 rounded-xl border border-slate-700 shadow">
+                        <table class="w-full text-left text-xs text-slate-300">
+                            <thead class="bg-slate-900 text-slate-400 uppercase font-semibold border-b border-slate-700">
+                                <tr>
+                                    <th class="p-3">Type</th>
+                                    <th class="p-3">Invoice No</th>
+                                    <th class="p-3">Date</th>
+                                    <th class="p-3">Party Name</th>
+                                    <th class="p-3">Taxable Amt</th>
+                                    <th class="p-3">Total Amt</th>
+                                    <th class="p-3">E-Way Bill</th>
+                                    <th class="p-3">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="invoiceTableBody" class="divide-y divide-slate-700/60">
+                                <!-- Dynamic Invoice Rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Sub View: Contractor Payment Slip Generator -->
+                <div id="contractorTab" class="acc-sub-view hidden space-y-6">
+                    <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 space-y-4">
+                        <h3 class="text-md font-bold text-white border-b border-slate-700 pb-2">Generate Contractor Jobwork Payment Slip</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-xs">
+                            <div>
+                                <label class="text-slate-400 block mb-1">Contractor Name</label>
+                                <input id="cName" type="text" value="Sharma Engineering Works" class="w-full bg-slate-900 border border-slate-700 rounded px-2.5 py-1.5 text-slate-200">
                             </div>
                             <div>
-                                <label class="font-semibold">Item Details & Specs</label>
-                                <textarea class="w-full p-2 border rounded mt-1" rows="2">Super Enamelled Copper Strip 3.2mm x 1.5mm - Quantity: 500 Kg</textarea>
+                                <label class="text-slate-400 block mb-1">Job Work Description</label>
+                                <input id="cJob" type="text" value="Core Cutting & Tank Assembly" class="w-full bg-slate-900 border border-slate-700 rounded px-2.5 py-1.5 text-slate-200">
                             </div>
-                            <button onclick="alert('Purchase Order Created Successfully!')" class="w-full py-2 bg-blue-600 text-white font-bold rounded">Generate Official PO</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 7. PRODUCT CATALOGUE TAB -->
-                <div id="tab-catalogue" class="tab-content hidden space-y-6">
-                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-6">
-                        <div class="flex justify-between items-center border-b pb-4">
                             <div>
-                                <h3 class="font-bold text-slate-900 text-lg">3-Firm Production Catalogue</h3>
-                                <p class="text-xs text-slate-500">Products manufactured across Bigvolt, Innovivo & AR Rehyan</p>
+                                <label class="text-slate-400 block mb-1">Rate (₹ per unit)</label>
+                                <input id="cRate" type="number" value="450" class="w-full bg-slate-900 border border-slate-700 rounded px-2.5 py-1.5 text-slate-200">
                             </div>
-                            <button onclick="alert('Upload image feature active')" class="px-3 py-2 bg-slate-800 text-white text-xs font-semibold rounded-lg flex items-center gap-1">
-                                <i data-lucide="upload" class="w-3.5 h-3.5"></i> Upload Catalogue Product
+                            <div>
+                                <label class="text-slate-400 block mb-1">Quantity Completed</label>
+                                <input id="cQty" type="number" value="100" class="w-full bg-slate-900 border border-slate-700 rounded px-2.5 py-1.5 text-slate-200">
+                            </div>
+                            <div>
+                                <label class="text-slate-400 block mb-1">Advance Deducted (₹)</label>
+                                <input id="cAdv" type="number" value="5000" class="w-full bg-slate-900 border border-slate-700 rounded px-2.5 py-1.5 text-slate-200">
+                            </div>
+                            <div>
+                                <label class="text-slate-400 block mb-1">Fooding Deducted (₹)</label>
+                                <input id="cFood" type="number" value="1200" class="w-full bg-slate-900 border border-slate-700 rounded px-2.5 py-1.5 text-slate-200">
+                            </div>
+                        </div>
+                        <button onclick="renderContractorVoucher()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg text-xs transition shadow">
+                            Generate Printable Voucher Slip
+                        </button>
+                    </div>
+
+                    <!-- Canva-Style Printable Voucher Sheet -->
+                    <div id="voucherPrintArea" class="bg-white text-slate-900 p-8 rounded-xl shadow-2xl border border-slate-300 space-y-6 max-w-3xl mx-auto">
+                        <div class="flex justify-between items-start border-b-2 border-slate-900 pb-4">
+                            <div>
+                                <h2 id="vCompTitle" class="text-xl font-bold text-slate-900 uppercase">BIGVOLT TRANSFORMERS AND SWITCHGEAR PVT LTD</h2>
+                                <p id="vCompAddress" class="text-xs text-slate-600 mt-1">H1-702 RIICO Industrial Area, Khushkhera, Alwar, Rajasthan - 301707</p>
+                                <p class="text-xs font-semibold text-slate-800">GSTIN: <span id="vCompGst">08AAKCB0266E1ZV</span></p>
+                            </div>
+                            <div class="text-right">
+                                <span class="px-3 py-1 bg-slate-900 text-white font-bold text-xs uppercase rounded">JOB WORK PAYMENT SLIP</span>
+                                <p class="text-xs text-slate-600 mt-2">Voucher No: <span id="vNo" class="font-bold text-slate-900">BVTS/2026/001</span></p>
+                                <p class="text-xs text-slate-600">Date: <span id="vDate">07-10-2026</span></p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4 text-xs">
+                            <div>
+                                <p class="text-slate-500 font-semibold">Contractor Details:</p>
+                                <p id="vName" class="font-bold text-sm text-slate-900">Sharma Engineering Works</p>
+                            </div>
+                            <div>
+                                <p class="text-slate-500 font-semibold">Job Work Summary:</p>
+                                <p id="vJob" class="font-bold text-slate-900">Core Cutting & Tank Assembly</p>
+                            </div>
+                        </div>
+
+                        <table class="w-full text-left text-xs border border-slate-300">
+                            <thead class="bg-slate-100 text-slate-700 uppercase font-bold border-b border-slate-300">
+                                <tr>
+                                    <th class="p-2 border-r">Rate (₹)</th>
+                                    <th class="p-2 border-r">Quantity</th>
+                                    <th class="p-2 border-r">Total Gross (₹)</th>
+                                    <th class="p-2 border-r">Deductions (Adv + Fooding)</th>
+                                    <th class="p-2 border-r">TDS (1%)</th>
+                                    <th class="p-2">Net Payable (₹)</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-200 font-semibold">
+                                <tr>
+                                    <td id="vRate" class="p-2 border-r">₹ 450</td>
+                                    <td id="vQty" class="p-2 border-r">100</td>
+                                    <td id="vGross" class="p-2 border-r">₹ 45,000</td>
+                                    <td id="vDeduct" class="p-2 border-r">₹ 6,200</td>
+                                    <td id="vTds" class="p-2 border-r">₹ 450</td>
+                                    <td id="vNet" class="p-2 font-bold text-emerald-700 text-sm">₹ 38,350</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="flex justify-between items-end pt-12 text-xs font-bold border-t border-slate-200">
+                            <div class="text-center">
+                                <p class="border-t border-slate-400 pt-1 w-36">Verified By (HR/Admin)</p>
+                            </div>
+                            <div class="text-center">
+                                <p class="border-t border-slate-400 pt-1 w-36">Contractor Signature</p>
+                            </div>
+                        </div>
+
+                        <div class="no-print pt-4 flex justify-end">
+                            <button onclick="window.print()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg shadow">
+                                Print / Download PDF
                             </button>
                         </div>
+                    </div>
+                </div>
+            </section>
 
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <!-- Bigvolt Product -->
-                            <div class="border rounded-xl overflow-hidden shadow-sm bg-slate-50">
-                                <div class="h-40 bg-slate-200 flex items-center justify-center text-slate-400">
-                                    <i data-lucide="zap" class="w-12 h-12 text-blue-600"></i>
-                                </div>
-                                <div class="p-4">
-                                    <span class="text-[10px] bg-blue-100 text-blue-700 font-bold px-2 py-0.5 rounded">Bigvolt Transformers</span>
-                                    <h4 class="font-bold text-sm mt-2">Distribution Transformer</h4>
-                                    <p class="text-xs text-slate-500 mt-1">25 KVA to 2500 KVA Oil Immersed Transformers.</p>
-                                </div>
-                            </div>
+            <!-- Store Register View -->
+            <section id="storePage" class="page-view hidden space-y-6">
+                <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-700 pb-4">
+                    <div>
+                        <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                            <i data-lucide="boxes" class="w-6 h-6 text-amber-400"></i> Store Register (Inward & Outward)
+                        </h2>
+                        <p class="text-xs text-slate-400">Track Material Movement, Gate Passes, Vehicle Numbers & Requirements</p>
+                    </div>
+                    <button onclick="addStoreEntryPrompt()" class="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs font-semibold transition flex items-center gap-1 shadow">
+                        <i data-lucide="plus" class="w-3.5 h-3.5"></i> Add Store Entry
+                    </button>
+                </div>
 
-                            <!-- Innovivo Product -->
-                            <div class="border rounded-xl overflow-hidden shadow-sm bg-slate-50">
-                                <div class="h-40 bg-slate-200 flex items-center justify-center text-slate-400">
-                                    <i data-lucide="box" class="w-12 h-12 text-indigo-600"></i>
-                                </div>
-                                <div class="p-4">
-                                    <span class="text-[10px] bg-indigo-100 text-indigo-700 font-bold px-2 py-0.5 rounded">Innovivo Fabtech</span>
-                                    <h4 class="font-bold text-sm mt-2">Corrugated Transformer Tanks</h4>
-                                    <p class="text-xs text-slate-500 mt-1">Custom Mild Steel Leak-proof Fab Tanks.</p>
-                                </div>
-                            </div>
+                <div class="overflow-x-auto bg-slate-800 rounded-xl border border-slate-700 shadow">
+                    <table class="w-full text-left text-xs text-slate-300">
+                        <thead class="bg-slate-900 text-slate-400 uppercase font-semibold border-b border-slate-700">
+                            <tr>
+                                <th class="p-3">Type</th>
+                                <th class="p-3">Date & Time</th>
+                                <th class="p-3">Invoice / Gate Pass</th>
+                                <th class="p-3">Party Name</th>
+                                <th class="p-3">Item Details</th>
+                                <th class="p-3">Quantity</th>
+                                <th class="p-3">Vehicle No</th>
+                                <th class="p-3">Issued To / From</th>
+                            </tr>
+                        </thead>
+                        <tbody id="storeTableBody" class="divide-y divide-slate-700/60">
+                            <!-- Dynamic Store Entries -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
 
-                            <!-- AR Rehyan Product -->
-                            <div class="border rounded-xl overflow-hidden shadow-sm bg-slate-50">
-                                <div class="h-40 bg-slate-200 flex items-center justify-center text-slate-400">
-                                    <i data-lucide="scissors" class="w-12 h-12 text-amber-600"></i>
-                                </div>
-                                <div class="p-4">
-                                    <span class="text-[10px] bg-amber-100 text-amber-700 font-bold px-2 py-0.5 rounded">AR Rehyan International</span>
-                                    <h4 class="font-bold text-sm mt-2">CRGO Core Lamination Cut</h4>
-                                    <p class="text-xs text-slate-500 mt-1">Precision Step Lap Cut CRGO Cores.</p>
-                                </div>
-                            </div>
+            <!-- Production Tracker View -->
+            <section id="productionPage" class="page-view hidden space-y-6">
+                <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-700 pb-4">
+                    <div>
+                        <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                            <i data-lucide="factory" class="w-6 h-6 text-purple-400"></i> Transformer Production Tracker
+                        </h2>
+                        <p class="text-xs text-slate-400">Monitor Active Batches, Production In-Charges & Work Orders</p>
+                    </div>
+                    <button onclick="addProductionBatchPrompt()" class="px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-xs font-semibold transition flex items-center gap-1 shadow">
+                        <i data-lucide="plus" class="w-3.5 h-3.5"></i> Add New Batch
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="productionCardsContainer">
+                    <!-- Dynamic Work Order Cards -->
+                </div>
+            </section>
+
+            <!-- Vendors & PO View -->
+            <section id="vendorsPage" class="page-view hidden space-y-6">
+                <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-700 pb-4">
+                    <div>
+                        <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                            <i data-lucide="truck" class="w-6 h-6 text-rose-400"></i> Vendor Directory & Purchase Orders
+                        </h2>
+                        <p class="text-xs text-slate-400">Manage Supplier Listings & Generate Standard Purchase Orders</p>
+                    </div>
+                    <button onclick="addVendorPrompt()" class="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-semibold transition flex items-center gap-1 shadow">
+                        <i data-lucide="plus" class="w-3.5 h-3.5"></i> Add Vendor
+                    </button>
+                </div>
+
+                <div class="overflow-x-auto bg-slate-800 rounded-xl border border-slate-700 shadow">
+                    <table class="w-full text-left text-xs text-slate-300">
+                        <thead class="bg-slate-900 text-slate-400 uppercase font-semibold border-b border-slate-700">
+                            <tr>
+                                <th class="p-3">S.No</th>
+                                <th class="p-3">Party Name</th>
+                                <th class="p-3">Supplied Items</th>
+                                <th class="p-3">Contact No</th>
+                                <th class="p-3">Location</th>
+                                <th class="p-3">Item Description</th>
+                                <th class="p-3 text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="vendorTableBody" class="divide-y divide-slate-700/60">
+                            <!-- Dynamic 50-row vendor list -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Product Catalog View -->
+            <section id="catalogPage" class="page-view hidden space-y-6">
+                <div class="border-b border-slate-700 pb-4">
+                    <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                        <i data-lucide="book-open" class="w-6 h-6 text-cyan-400"></i> Group Product Catalog Showcase
+                    </h2>
+                    <p class="text-xs text-slate-400">Transformers, Tank Fabrication & Precision Core Cutting</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden shadow">
+                        <div class="h-48 bg-slate-700 flex items-center justify-center text-slate-500">
+                            <i data-lucide="zap" class="w-16 h-16 text-indigo-400"></i>
+                        </div>
+                        <div class="p-4 space-y-2">
+                            <span class="px-2 py-0.5 bg-indigo-500/20 text-indigo-400 rounded text-[10px] font-bold uppercase">Bigvolt Transformers</span>
+                            <h3 class="font-bold text-white text-base">Distribution & Furnace Transformers</h3>
+                            <p class="text-xs text-slate-400">High-efficiency power distribution units manufactured up to 5MVA 33KV Class.</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden shadow">
+                        <div class="h-48 bg-slate-700 flex items-center justify-center text-slate-500">
+                            <i data-lucide="container" class="w-16 h-16 text-amber-400"></i>
+                        </div>
+                        <div class="p-4 space-y-2">
+                            <span class="px-2 py-0.5 bg-amber-500/20 text-amber-400 rounded text-[10px] font-bold uppercase">Innovivo Fabtech</span>
+                            <h3 class="font-bold text-white text-base">Heavy Transformer Tanks</h3>
+                            <p class="text-xs text-slate-400">Custom corrugated and hermetically sealed tanks fabricated for heavy transformers.</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden shadow">
+                        <div class="h-48 bg-slate-700 flex items-center justify-center text-slate-500">
+                            <i data-lucide="scissors" class="w-16 h-16 text-emerald-400"></i>
+                        </div>
+                        <div class="p-4 space-y-2">
+                            <span class="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 rounded text-[10px] font-bold uppercase">AR Rehyan International</span>
+                            <h3 class="font-bold text-white text-base">CRGO Core Cutting</h3>
+                            <p class="text-xs text-slate-400">High-grade CRGO lamination processing and precision core cutting services.</p>
                         </div>
                     </div>
                 </div>
+            </section>
 
-                <!-- 8. GATE PASS / VISITOR LOG TAB -->
-                <div id="tab-gatepass" class="tab-content hidden space-y-6">
-                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-                        <h3 class="font-bold text-slate-900">Gate Pass & Visitor Security Register</h3>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-xs text-left text-slate-600">
-                                <thead class="bg-slate-100 font-bold text-slate-700">
-                                    <tr>
-                                        <th class="p-3">Gate Pass ID</th>
-                                        <th class="p-3">Visitor / Driver Name</th>
-                                        <th class="p-3">Vehicle No</th>
-                                        <th class="p-3">Purpose of Visit</th>
-                                        <th class="p-3">Time In</th>
-                                        <th class="p-3">Time Out</th>
-                                        <th class="p-3">Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr class="border-b">
-                                        <td class="p-3 font-mono font-bold">GP-8841</td>
-                                        <td class="p-3">Rajesh Kumar (Driver)</td>
-                                        <td class="p-3">RJ 02 GA 4412</td>
-                                        <td class="p-3">Copper Coil Delivery</td>
-                                        <td class="p-3">10:15 AM</td>
-                                        <td class="p-3">11:30 AM</td>
-                                        <td class="p-3"><span class="bg-emerald-100 text-emerald-700 font-bold px-2 py-0.5 rounded">EXITED</span></td>
-                                    </tr>
-                                </tbody>
-                            </table>
+            <!-- About Us View -->
+            <section id="aboutPage" class="page-view hidden space-y-6">
+                <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-xl space-y-4">
+                    <h2 class="text-2xl font-bold text-white">About Bigvolt Transformers & Group Companies</h2>
+                    <p class="text-sm text-slate-300 leading-relaxed">
+                        Bigvolt Transformers and Switchgear Private Limited is an active private manufacturing enterprise based in RIICO Industrial Area, Khushkhera, Alwar, Rajasthan. We specialize in repair, rewinding, and manufacturing of new distribution transformers, furnace transformers, and power equipment up to 5MVA 33KV Class.
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs pt-4 border-t border-slate-700">
+                        <div class="p-4 bg-slate-900/60 rounded-xl border border-slate-700">
+                            <h3 class="font-bold text-indigo-400 text-sm mb-2">Head Office & Contact Details</h3>
+                            <p class="text-slate-300"><strong>HR Head:</strong> Apoorv Upadhyay</p>
+                            <p class="text-slate-300"><strong>HR Contact:</strong> +91 8957037853</p>
+                            <p class="text-slate-300"><strong>Company Contact:</strong> 7988340039 / 7607070994</p>
+                            <p class="text-slate-300"><strong>Email:</strong> infobvts@gmail.com</p>
+                        </div>
+                        <div class="p-4 bg-slate-900/60 rounded-xl border border-slate-700">
+                            <h3 class="font-bold text-emerald-400 text-sm mb-2">Manufacturing Facilities</h3>
+                            <p class="text-slate-300">1. H1-702 RIICO Industrial Area, Khushkhera, Alwar, Rajasthan</p>
+                            <p class="text-slate-300">2. G1-845 RIICO Industrial Area, Khushkhera, Alwar, Rajasthan</p>
+                            <p class="text-slate-300">3. Plot G1-844 RIICO Industrial Area, Khushkhera, Alwar, Rajasthan</p>
                         </div>
                     </div>
                 </div>
+            </section>
 
-            </main>
+        </main>
+    </div>
+
+    <!-- Company Switcher Modal -->
+    <div id="companyModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
+            <h3 class="text-lg font-bold text-white text-center">Select Operating Company</h3>
+            <div class="space-y-3">
+                <button onclick="selectCompany('bvts')" class="w-full text-left p-4 bg-slate-700/50 hover:bg-slate-700 rounded-xl border border-slate-600 transition">
+                    <p class="font-bold text-indigo-400 text-sm">Bigvolt Transformers & Switchgear Pvt Ltd</p>
+                    <p class="text-[11px] text-slate-400">Transformers Manufacturing (H1-702 RIICO)</p>
+                </button>
+                <button onclick="selectCompany('innovivo')" class="w-full text-left p-4 bg-slate-700/50 hover:bg-slate-700 rounded-xl border border-slate-600 transition">
+                    <p class="font-bold text-amber-400 text-sm">Innovivo Fabtech Pvt Ltd</p>
+                    <p class="text-[11px] text-slate-400">Transformer Tanks Fabrication (G1-845 RIICO)</p>
+                </button>
+                <button onclick="selectCompany('rehyan')" class="w-full text-left p-4 bg-slate-700/50 hover:bg-slate-700 rounded-xl border border-slate-600 transition">
+                    <p class="font-bold text-emerald-400 text-sm">AR Rehyan International</p>
+                    <p class="text-[11px] text-slate-400">Transformer Core Cutting (G1-844 RIICO)</p>
+                </button>
+            </div>
         </div>
     </div>
 
-    <!-- JAVASCRIPT APP LOGIC -->
+    <!-- Bank Details Modal -->
+    <div id="bankModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl max-w-sm w-full p-6 shadow-2xl space-y-4">
+            <h3 class="text-md font-bold text-white">Update Employee Bank Account</h3>
+            <div class="space-y-3 text-xs">
+                <div>
+                    <label class="text-slate-400 block mb-1">Bank Name</label>
+                    <input id="modalBankName" type="text" placeholder="State Bank of India" class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-slate-200">
+                </div>
+                <div>
+                    <label class="text-slate-400 block mb-1">Account Number</label>
+                    <input id="modalAccNo" type="text" placeholder="30982736152" class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-slate-200">
+                </div>
+                <div>
+                    <label class="text-slate-400 block mb-1">IFSC Code</label>
+                    <input id="modalIfsc" type="text" placeholder="SBIN0001234" class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-slate-200">
+                </div>
+            </div>
+            <div class="flex justify-end gap-2 pt-2">
+                <button onclick="closeBankModal()" class="px-3 py-1.5 bg-slate-700 text-slate-300 rounded text-xs font-semibold">Cancel</button>
+                <button onclick="saveBankDetails()" class="px-3 py-1.5 bg-indigo-600 text-white rounded text-xs font-semibold">Save Details</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Application Logic -->
     <script>
-        // Company Master Database
-        const companyDB = {
+        // Company Data Objects
+        const companies = {
             bvts: {
-                name: "Bigvolt Transformers & Switchgear Pvt Ltd",
-                short: "BV",
-                color: "bg-blue-600",
-                address: "H1 - 702 RIICO Industrial area, Khushkhera, Alwar , Rajasthan, 301707",
+                name: "Bigvolt Transformers and Switchgear Pvt Ltd",
+                short: "Bigvolt Transformers",
+                address: "H1-702 RIICO Industrial Area, Khushkhera, Alwar, Rajasthan - 301707",
                 gst: "08AAKCB0266E1ZV",
-                contacts: "7988340039 / 7607070994",
-                mail: "infobvts@gmail.com",
-                desc: "High Voltage Transformer & Switchgear Manufacturing"
+                prefix: "BVTS"
             },
             innovivo: {
                 name: "Innovivo Fabtech Pvt Ltd",
-                short: "IF",
-                color: "bg-indigo-600",
-                address: "G1-845 RIICO Industrial area, Khushkhera, Alwar , Rajasthan, 301707",
+                short: "Innovivo Fabtech",
+                address: "G1-845 RIICO Industrial Area, Khushkhera, Alwar, Rajasthan - 301707",
                 gst: "08AAICI4283L1Z2",
-                contacts: "7988340039 / 7607070994",
-                mail: "N/A",
-                desc: "Heavy Duty Transformer Tank Fabrication Unit"
+                prefix: "INNO"
             },
             rehyan: {
                 name: "AR Rehyan International",
-                short: "AR",
-                color: "bg-amber-600",
-                address: "Plot no G1-844 RIICO Industrial area, Khushkhera, Alwar , Rajasthan, 301707",
+                short: "AR Rehyan",
+                address: "Plot G1-844 RIICO Industrial Area, Khushkhera, Alwar, Rajasthan - 301707",
                 gst: "08APLPK2706D1Z4",
-                contacts: "7988340039 / 7607070994",
-                mail: "N/A",
-                desc: "Precision CRGO Core Cutting & Lamination Processing"
+                prefix: "ARR"
             }
         };
 
-        let currentCompany = 'bvts';
+        let currentCompKey = 'bvts';
+        let employees = [];
+        let expenses = [
+            { date: '2026-10-07', category: 'Factory Maintenance', desc: 'Cutting Oil & Lubricants', amount: 4500, approvedBy: 'Owner' },
+            { date: '2026-10-07', category: 'Staff Fooding', desc: 'Overtime Tea & Snacks', amount: 1200, approvedBy: 'HR Head' }
+        ];
+        let invoices = [
+            { type: 'Purchase', no: 'INV-9081', date: '2026-10-05', party: 'Rajesh Steel Co', tax: 150000, total: 177000, eway: '341098239012', status: 'Payment Pending' }
+        ];
+        let storeEntries = [
+            { type: 'Inward', datetime: '2026-10-07 10:30', docNo: 'GP-1029', party: 'Copper Wires Ltd', item: 'Super Enamelled Copper Wire', qty: '500 Kg', vehicle: 'RJ02 GB 4512', person: 'Store Keeper' }
+        ];
+        let productionRuns = [
+            { name: '25KVA Transformer Run', target: 52, status: 'Running', incharge: 'Suresh Kumar' },
+            { name: '100KVA Core Cutting Batch', target: 20, status: 'Past', incharge: 'Ramesh Singh' }
+        ];
+        let vendors = [
+            { name: 'Saini Electricals', items: 'Insulation Paper & Oil', contact: '9812345678', location: 'Bhiwadi', desc: 'Primary Supplier for Transformer Oil' }
+        ];
 
-        // Initialize Lucide Icons
-        document.addEventListener("DOMContentLoaded", () => {
+        // Generate Initial 50 Employee Records
+        function initData() {
+            for (let i = 1; i <= 50; i++) {
+                employees.push({
+                    id: i,
+                    name: i === 1 ? 'Apoorv Upadhyay' : `Employee ${i}`,
+                    father: `Father ${i}`,
+                    joining: '2024-01-15',
+                    baseSalary: 18000 + (i * 200),
+                    inTime: '09:00',
+                    outTime: '18:00',
+                    otHours: 2,
+                    esic: i % 2 === 0 ? 'Done' : 'Pending',
+                    esicAmount: 250,
+                    advance: 1000,
+                    bankName: 'State Bank of India',
+                    accNo: `38901239${i}`,
+                    ifsc: 'SBIN0001234'
+                });
+            }
+        }
+
+        // DOM Loaded Init
+        document.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
-            populateEmployees();
-            populateTimeManager();
-            populateMasterRoll();
-            populateExpenses();
-            populateBilling();
-            populateStore();
-            populateProduction();
-            populateVendors();
-            calculateContractorSlip();
+            initData();
+            renderAll();
         });
 
-        // Login & Switcher Flow
-        function proceedToCompanySelect() {
-            document.getElementById('loginStep').classList.add('hidden');
-            document.getElementById('companyStep').classList.remove('hidden');
+        // Navigation Page Switcher
+        function showPage(pageId) {
+            document.querySelectorAll('.page-view').forEach(p => p.classList.add('hidden'));
+            document.getElementById(`${pageId}Page`).classList.remove('hidden');
+        }
+
+        // HR Sub Tab Switcher
+        function switchHrSubTab(tabId) {
+            document.querySelectorAll('.hr-sub-view').forEach(v => v.classList.add('hidden'));
+            document.getElementById(tabId).classList.remove('hidden');
+        }
+
+        // Accounts Sub Tab Switcher
+        function switchAccSubTab(tabId) {
+            document.querySelectorAll('.acc-sub-view').forEach(v => v.classList.add('hidden'));
+            document.getElementById(tabId).classList.remove('hidden');
+        }
+
+        // Company Switcher
+        function switchCompanyModal() {
+            document.getElementById('companyModal').classList.remove('hidden');
         }
 
         function selectCompany(key) {
-            currentCompany = key;
-            const data = companyDB[key];
-            
-            document.getElementById('selectedCompanyName').innerText = data.name;
-            document.getElementById('welcomeHeading').innerText = "Welcome to " + data.name;
-            document.getElementById('welcomeDescription').innerText = data.desc;
-            document.getElementById('companyGstBadge').innerText = data.gst;
-            document.getElementById('appLogoBadge').innerText = data.short;
-            document.getElementById('appLogoBadge').className = `w-10 h-10 ${data.color} rounded-lg flex items-center justify-center font-bold text-xl text-white`;
+            currentCompKey = key;
+            const c = companies[key];
+            document.getElementById('activeCompanyBadge').innerText = c.short;
+            document.getElementById('activeGstBadge').innerText = c.gst;
+            document.getElementById('welcomeCompTitle').innerText = c.short;
+            document.getElementById('welcomeCompAddr').innerText = c.address;
+            document.getElementById('appWatermark').innerText = c.short.toUpperCase();
 
-            // Slip updates
-            document.getElementById('slipCompanyName').innerText = data.name;
-            document.getElementById('slipAddress').innerText = data.address;
-            document.getElementById('slipGst').innerText = data.gst;
+            // Update Voucher Headers
+            document.getElementById('vCompTitle').innerText = c.name;
+            document.getElementById('vCompAddress').innerText = c.address;
+            document.getElementById('vCompGst').innerText = c.gst;
+            document.getElementById('vNo').innerText = `${c.prefix}/2026/001`;
 
-            document.getElementById('loginModal').classList.add('hidden');
-            document.getElementById('mainApp').classList.remove('hidden');
+            document.getElementById('companyModal').classList.add('hidden');
         }
 
-        function switchCompanyModal() {
-            document.getElementById('loginModal').classList.remove('hidden');
-            document.getElementById('loginStep').classList.add('hidden');
-            document.getElementById('companyStep').classList.remove('hidden');
+        // Toggle Notifications
+        function toggleNotifications() {
+            document.getElementById('notificationsMenu').classList.toggle('hidden');
         }
 
-        function logout() {
-            document.getElementById('mainApp').classList.add('hidden');
-            document.getElementById('loginModal').classList.remove('hidden');
-            document.getElementById('loginStep').classList.remove('hidden');
-            document.getElementById('companyStep').classList.add('hidden');
+        // Render All Modules
+        function renderAll() {
+            renderAttendanceTable();
+            renderKycCards();
+            renderPayrollTable();
+            renderExpenseTable();
+            renderInvoiceTable();
+            renderStoreTable();
+            renderProductionCards();
+            renderVendorTable();
         }
 
-        // Navigation Switcher
-        function showTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll('.nav-btn').forEach(el => {
-                el.classList.remove('bg-blue-50/80', 'text-blue-600');
-                el.classList.add('text-slate-600');
-            });
-
-            document.getElementById('tab-' + tabId).classList.remove('hidden');
-            const activeBtn = document.getElementById('nav-' + tabId);
-            if(activeBtn) {
-                activeBtn.classList.add('bg-blue-50/80', 'text-blue-600');
-            }
-        }
-
-        // Sub Tab Switchers
-        function switchHrSubTab(sub) {
-            ['attendance', 'time', 'masterroll'].forEach(s => {
-                document.getElementById('hrContent-' + s).classList.add('hidden');
-                document.getElementById('hrSub-' + s).className = "px-4 py-2 text-xs font-bold rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200";
-            });
-            document.getElementById('hrContent-' + sub).classList.remove('hidden');
-            document.getElementById('hrSub-' + sub).className = "px-4 py-2 text-xs font-bold rounded-lg bg-blue-600 text-white";
-        }
-
-        function switchAccSubTab(sub) {
-            ['expenses', 'purchasesale', 'contractor'].forEach(s => {
-                document.getElementById('accContent-' + s).classList.add('hidden');
-                document.getElementById('accSub-' + s).className = "px-4 py-2 text-xs font-bold rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200";
-            });
-            document.getElementById('accContent-' + sub).classList.remove('hidden');
-            document.getElementById('accSub-' + sub).className = "px-4 py-2 text-xs font-bold rounded-lg bg-blue-600 text-white";
-        }
-
-        function switchStoreTab(sub) {
-            document.getElementById('storeTab-inward').className = sub === 'inward' ? "px-4 py-2 text-xs font-bold rounded-lg bg-blue-600 text-white" : "px-4 py-2 text-xs font-bold rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200";
-            document.getElementById('storeTab-outward').className = sub === 'outward' ? "px-4 py-2 text-xs font-bold rounded-lg bg-blue-600 text-white" : "px-4 py-2 text-xs font-bold rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200";
-        }
-
-        function switchVendorTab(sub) {
-            document.getElementById('venContent-directory').classList.toggle('hidden', sub !== 'directory');
-            document.getElementById('venContent-po').classList.toggle('hidden', sub !== 'po');
-            document.getElementById('venTab-directory').className = sub === 'directory' ? "px-4 py-2 text-xs font-bold rounded-lg bg-blue-600 text-white" : "px-4 py-2 text-xs font-bold rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200";
-            document.getElementById('venTab-po').className = sub === 'po' ? "px-4 py-2 text-xs font-bold rounded-lg bg-blue-600 text-white" : "px-4 py-2 text-xs font-bold rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200";
-        }
-
-        // POPULATE 50 EMPLOYEES GRID
-        function populateEmployees() {
-            const tbody = document.getElementById('employeeAttendanceTableBody');
+        // 1. Render Attendance Table
+        function renderAttendanceTable() {
+            const tbody = document.getElementById('attendanceTableBody');
             tbody.innerHTML = '';
-            for(let i=1; i<=50; i++) {
-                let daysTd = '';
-                for(let d=1; d<=31; d++) {
-                    daysTd += `<td class="p-1 border-r text-center hover:bg-blue-100 cursor-pointer font-bold select-none" onclick="toggleAttendance(this)">P</td>`;
+            employees.forEach((emp) => {
+                let daysHtml = '';
+                for (let d = 1; d <= 31; d++) {
+                    daysHtml += `<td class="p-1 text-center"><input type="checkbox" checked class="rounded border-slate-700 bg-slate-900 text-indigo-500"></td>`;
                 }
-
                 tbody.innerHTML += `
-                    <tr class="hover:bg-slate-50">
-                        <td class="p-2 border-r text-center font-bold">${i}</td>
-                        <td class="p-2 border-r">
-                            <input type="text" value="Worker ${i}" class="w-full font-bold bg-transparent border-b border-transparent hover:border-slate-300">
-                            <input type="text" placeholder="Father's Name" value="S/o Ram Singh" class="w-full text-[10px] text-slate-400 bg-transparent">
-                            <div class="text-[10px] text-blue-600 mt-1">OT: <input type="number" value="2" class="w-10 border rounded text-center"> hrs</div>
+                    <tr>
+                        <td class="p-3 font-semibold">${emp.id}</td>
+                        <td class="p-3 font-bold text-white">${emp.name}</td>
+                        <td class="p-3">
+                            <input type="time" value="${emp.inTime}" class="bg-slate-900 border border-slate-700 rounded px-1 text-[11px]">
                         </td>
-                        <td class="p-2 border-r text-center space-y-1">
-                            <span class="inline-block px-1.5 py-0.5 bg-emerald-100 text-emerald-700 font-bold text-[9px] rounded">KYC Verified</span>
-                            <span class="inline-block px-1.5 py-0.5 bg-blue-100 text-blue-700 font-bold text-[9px] rounded">ESIC Done</span>
+                        <td class="p-3">
+                            <input type="number" value="${emp.otHours}" class="w-12 bg-slate-900 border border-slate-700 rounded px-1 text-[11px]">
                         </td>
-                        ${daysTd}
-                        <td class="p-2 text-center">
-                            <button onclick="alert('Bank & Employee details edit window')" class="text-slate-400 hover:text-slate-800"><i data-lucide="more-vertical" class="w-4 h-4"></i></button>
+                        ${daysHtml}
+                        <td class="p-3 text-center">
+                            <button onclick="openBankModal(${emp.id})" class="p-1 bg-slate-700 hover:bg-slate-600 rounded text-slate-300">
+                                <i data-lucide="more-vertical" class="w-4 h-4"></i>
+                            </button>
                         </td>
                     </tr>
                 `;
-            }
+            });
+            lucide.createIcons();
         }
 
-        function toggleAttendance(td) {
-            if(td.innerText === 'P') {
-                td.innerText = 'A';
-                td.className = "p-1 border-r text-center hover:bg-rose-100 text-rose-600 font-bold select-none";
-            } else {
-                td.innerText = 'P';
-                td.className = "p-1 border-r text-center hover:bg-blue-100 text-slate-800 font-bold select-none";
-            }
+        // 2. Render KYC Cards
+        function renderKycCards() {
+            const container = document.getElementById('kycCardsContainer');
+            container.innerHTML = '';
+            employees.slice(0, 6).forEach(emp => {
+                container.innerHTML += `
+                    <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 bg-slate-700 rounded-full flex items-center justify-center font-bold text-indigo-400">
+                                ${emp.name.charAt(0)}
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-white text-sm">${emp.name}</h4>
+                                <p class="text-[11px] text-slate-400">Father: ${emp.father}</p>
+                            </div>
+                        </div>
+                        <div class="text-xs space-y-1 text-slate-300 border-t border-slate-700 pt-2">
+                            <p><strong>Joining Date:</strong> ${emp.joining}</p>
+                            <p><strong>ESIC Status:</strong> <span class="${emp.esic === 'Done' ? 'text-emerald-400' : 'text-amber-400'}">${emp.esic}</span></p>
+                        </div>
+                    </div>
+                `;
+            });
         }
 
-        function addEmployeeRow() {
-            alert('New Employee Slot Created in 50 Serial Grid.');
-        }
-
-        // TIME MANAGER POPULATE
-        function populateTimeManager() {
-            const tbody = document.getElementById('timeManagerTableBody');
+        // 3. Render Payroll Table
+        function renderPayrollTable() {
+            const tbody = document.getElementById('payrollTableBody');
             tbody.innerHTML = '';
-            for(let i=1; i<=10; i++) {
+            employees.forEach(emp => {
+                const otPay = emp.otHours * 150;
+                const gross = emp.baseSalary + otPay;
+                const net = gross - emp.esicAmount - emp.advance;
                 tbody.innerHTML += `
-                    <tr class="hover:bg-slate-50">
-                        <td class="p-3">${i}</td>
-                        <td class="p-3 font-semibold">Worker ${i}</td>
-                        <td class="p-3">2026-10-07</td>
-                        <td class="p-3"><input type="time" value="09:00" class="border rounded px-1"></td>
-                        <td class="p-3"><input type="time" value="18:00" class="border rounded px-1"></td>
-                        <td class="p-3 font-mono font-bold">9 Hrs</td>
-                        <td class="p-3"><button class="text-blue-600 font-bold">Save Shift</button></td>
+                    <tr>
+                        <td class="p-3">${emp.id}</td>
+                        <td class="p-3 font-bold text-white">${emp.name}</td>
+                        <td class="p-3">₹ ${emp.baseSalary}</td>
+                        <td class="p-3 text-indigo-400">₹ ${otPay}</td>
+                        <td class="p-3 font-bold">₹ ${gross}</td>
+                        <td class="p-3 text-red-400">₹ ${emp.esicAmount}</td>
+                        <td class="p-3 text-amber-400">₹ ${emp.advance}</td>
+                        <td class="p-3 font-bold text-emerald-400">₹ ${net}</td>
+                        <td class="p-3 text-center">
+                            <button onclick="generateSalarySlip('${emp.name}', ${emp.baseSalary},${otPay}, ${gross},${net})" class="px-2 py-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded text-[11px] font-semibold">
+                                Generate Slip
+                            </button>
+                        </td>
                     </tr>
                 `;
-            }
+            });
         }
 
-        // MASTER ROLL POPULATE
-        function populateMasterRoll() {
-            const tbody = document.getElementById('masterRollTableBody');
+        // 4. Render Expenses
+        function renderExpenseTable() {
+            const tbody = document.getElementById('expenseTableBody');
             tbody.innerHTML = '';
-            for(let i=1; i<=15; i++) {
+            expenses.forEach(exp => {
                 tbody.innerHTML += `
-                    <tr class="hover:bg-slate-50">
-                        <td class="p-3">${i}</td>
-                        <td class="p-3 font-bold">Worker ${i} <span class="block text-[10px] text-slate-400 font-normal">S/o Father ${i}</span></td>
-                        <td class="p-3 font-mono">₹ 18,000</td>
-                        <td class="p-3 font-bold text-emerald-600">26 Days</td>
-                        <td class="p-3 font-bold text-blue-600">12 Hrs</td>
-                        <td class="p-3"><input type="number" value="1000" class="w-16 p-1 border rounded text-xs"></td>
-                        <td class="p-3 font-mono text-rose-600">₹ 135</td>
-                        <td class="p-3 font-mono font-bold text-slate-900">₹ 19,465</td>
-                        <td class="p-3"><button class="text-xs bg-slate-800 text-white px-2 py-1 rounded">Slip</button></td>
-                    </tr>
-                `;
-            }
-        }
-
-        // EXPENSES POPULATE
-        function populateExpenses() {
-            const tbody = document.getElementById('expensesTableBody');
-            tbody.innerHTML = `
-                <tr class="hover:bg-slate-50">
-                    <td class="p-3">2026-10-07</td>
-                    <td class="p-3 font-semibold">Factory Loading Tea & Refreshment</td>
-                    <td class="p-3 font-mono font-bold text-slate-800">₹ 450.00</td>
-                    <td class="p-3">Local Canteen</td>
-                    <td class="p-3"><span class="text-[10px] bg-emerald-100 text-emerald-700 font-bold px-2 py-0.5 rounded">Owner Approved</span></td>
-                    <td class="p-3"><button class="text-rose-600 font-bold">Delete</button></td>
-                </tr>
-            `;
-        }
-
-        function addExpenseRow() {
-            const tbody = document.getElementById('expensesTableBody');
-            tbody.innerHTML += `
-                <tr class="hover:bg-slate-50">
-                    <td class="p-3"><input type="date" value="2026-10-07" class="border rounded p-1"></td>
-                    <td class="p-3"><input type="text" placeholder="Expense description" class="border rounded p-1 w-full"></td>
-                    <td class="p-3"><input type="number" placeholder="Amount" class="border rounded p-1 w-20"></td>
-                    <td class="p-3"><input type="text" placeholder="Paid To" class="border rounded p-1"></td>
-                    <td class="p-3"><span class="text-[10px] bg-amber-100 text-amber-700 font-bold px-2 py-0.5 rounded">Pending Approval</span></td>
-                    <td class="p-3"><button class="text-blue-600 font-bold">Save</button></td>
-                </tr>
-            `;
-        }
-
-        // BILLING POPULATE
-        function populateBilling() {
-            const tbody = document.getElementById('billingTableBody');
-            tbody.innerHTML = `
-                <tr class="hover:bg-slate-50">
-                    <td class="p-2.5 font-bold text-emerald-600">Purchase</td>
-                    <td class="p-2.5 font-mono font-bold">INV-9942</td>
-                    <td class="p-2.5">2026-10-06</td>
-                    <td class="p-2.5 font-semibold">Precision Copper Wires</td>
-                    <td class="p-2.5">Super Enamelled Wire</td>
-                    <td class="p-2.5 font-mono">1,00,000</td>
-                    <td class="p-2.5 font-mono font-bold">1,18,000</td>
-                    <td class="p-2.5 font-mono">EWAY-881923</td>
-                    <td class="p-2.5"><span class="bg-emerald-100 text-emerald-700 font-bold px-2 py-0.5 rounded text-[10px]">Payment Done</span></td>
-                    <td class="p-2.5 text-[10px]">HDFC Bank - 002139123</td>
-                    <td class="p-2.5"><button class="text-blue-600 font-bold">Edit</button></td>
-                </tr>
-            `;
-        }
-
-        function addInvoiceRow() {
-            alert('New Purchase / Sale Bill Entry Row Added');
-        }
-
-        // CONTRACTOR SLIP CALCULATION
-        function calculateContractorSlip() {
-            const name = document.getElementById('cp_name').value;
-            const job = document.getElementById('cp_job').value;
-            const gross = parseFloat(document.getElementById('cp_amount').value) || 0;
-            const advance = parseFloat(document.getElementById('cp_advance').value) || 0;
-            const fooding = parseFloat(document.getElementById('cp_fooding').value) || 0;
-
-            const tds = gross * 0.01;
-            const net = gross - advance - fooding - tds;
-
-            document.getElementById('slipContractor').innerText = name;
-            document.getElementById('slipJob').innerText = job;
-            document.getElementById('slipGross').innerText = gross.toLocaleString('en-IN', {minimumFractionDigits: 2});
-            document.getElementById('slipAdvDed').innerText = "- " + advance.toLocaleString('en-IN', {minimumFractionDigits: 2});
-            document.getElementById('slipFoodDed').innerText = "- " + fooding.toLocaleString('en-IN', {minimumFractionDigits: 2});
-            document.getElementById('slipTds').innerText = "- " + tds.toLocaleString('en-IN', {minimumFractionDigits: 2});
-            document.getElementById('slipNet').innerText = "₹ " + net.toLocaleString('en-IN', {minimumFractionDigits: 2});
-        }
-
-        function generatePdfSlip() {
-            const element = document.getElementById('contractorSlipTemplate');
-            html2pdf().from(element).save('Contractor_Payment_Slip.pdf');
-        }
-
-        // STORE POPULATE
-        function populateStore() {
-            const tbody = document.getElementById('storeTableBody');
-            tbody.innerHTML = `
-                <tr class="hover:bg-slate-50">
-                    <td class="p-2.5 font-bold text-emerald-600">INWARD</td>
-                    <td class="p-2.5 font-mono font-bold">IN-8821</td>
-                    <td class="p-2.5">2026-10-07 | 11:30 AM</td>
-                    <td class="p-2.5 font-semibold">JSW Steel Ltd</td>
-                    <td class="p-2.5">CRGO Electrical Steel Sheets</td>
-                    <td class="p-2.5 font-mono font-bold">2,500 Kg</td>
-                    <td class="p-2.5 font-mono">RJ 02 CB 1102</td>
-                    <td class="p-2.5">Store Incharge</td>
-                    <td class="p-2.5"><button class="text-blue-600 font-bold">Edit</button></td>
-                </tr>
-            `;
-        }
-
-        function addStoreItem() {
-            alert('Store Entry Modal Opened');
-        }
-
-        // PRODUCTION POPULATE
-        function populateProduction() {
-            const tbody = document.getElementById('productionTableBody');
-            tbody.innerHTML = `
-                <tr class="hover:bg-slate-50">
-                    <td class="p-3 font-mono font-bold text-blue-600">WO-25KVA-52</td>
-                    <td class="p-3 font-semibold">25 KVA Aluminum Winding Transformer</td>
-                    <td class="p-3 font-bold">52 Nos Batch</td>
-                    <td class="p-3">Suresh Verma (Shopfloor Head)</td>
-                    <td class="p-3"><span class="bg-amber-100 text-amber-700 font-bold px-2.5 py-1 rounded-full text-[10px]">Running Production</span></td>
-                    <td class="p-3 text-[10px] text-slate-500">Core Ready, Coil Winding In-Progress</td>
-                    <td class="p-3"><button class="text-blue-600 font-bold">Update Status</button></td>
-                </tr>
-            `;
-        }
-
-        function addProductionRow() {
-            alert('Add Work Order Created.');
-        }
-
-        // 50 VENDORS DIRECTORY POPULATE
-        function populateVendors() {
-            const tbody = document.getElementById('vendorTableBody');
-            tbody.innerHTML = '';
-            for(let i=1; i<=50; i++) {
-                tbody.innerHTML += `
-                    <tr class="hover:bg-slate-50">
-                        <td class="p-2.5 font-bold">${i}</td>
-                        <td class="p-2.5 font-semibold">Vendor Supplier ${i}</td>
-                        <td class="p-2.5">Transformer Oil / Insulation Tape</td>
-                        <td class="p-2.5 font-mono">+91 98120000${i < 10 ? '0'+i : i}</td>
-                        <td class="p-2.5">RIICO Ind. Area, Bhiwadi</td>
-                        <td class="p-2.5 text-slate-400 text-[10px]">Approved A-Grade Supplier</td>
-                        <td class="p-2.5"><button class="text-blue-600 font-bold">Edit</button></td>
-                    </tr>
-                `;
-            }
-        }
-
-        function addVendorRow() {
-            alert('Vendor Details Added to 50 Directory List');
-        }
-    </script>
-</body>
-</html>
+                    <tr>
+                        <td class="p-3">${exp.date}</td>
+                        <td class="p-3 font-bold text-white">${exp.category}</td>
+                        <td class="p-3">${exp.desc}
